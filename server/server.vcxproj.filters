@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.hpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="QueueManager.cpp">
+      <Filter>QueueManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="pch">
+      <UniqueIdentifier>{8e9a5617-09ab-4e49-823d-5a26ae1d23bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{3b2da6e3-1157-43bc-a01a-ac05ae039aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{ebfbbb5a-4490-4cfd-954e-b11f851e0aba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QueueManager">
+      <UniqueIdentifier>{20276b53-8b18-43ff-b552-12e3c3b92321}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.hpp">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="QueueManager.h">
+      <Filter>QueueManager</Filter>
+    </ClInclude>
+    <ClInclude Include="myStruct.hpp" />
+    <ClInclude Include="utils.hpp" />
+    <ClInclude Include="Player.hpp" />
+  </ItemGroup>
+</Project>

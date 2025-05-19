@@ -403,3 +403,4 @@ FodyWeavers.xsd
 # 보안 패치
 *.crt
 *.key
+secure/

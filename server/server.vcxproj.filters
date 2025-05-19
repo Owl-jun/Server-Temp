@@ -46,6 +46,9 @@
     <Filter Include="Object\Player">
       <UniqueIdentifier>{c52f0f19-f299-4b27-ad30-0bd67d04ff8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DBManager">
+      <UniqueIdentifier>{aba134ab-1243-4607-884f-24440e2e92e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="Player.hpp">
       <Filter>Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DBManager.hpp">
+      <Filter>DBManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,8 +12,8 @@ Server::Server(asio::io_context& io_context, short port)
         // std::cout << "현재 경로: " << std::filesystem::current_path() << "\n";
 
         // TLS 키 세팅
-        ssl_ctx.use_certificate_chain_file("server.crt");
-        ssl_ctx.use_private_key_file("server.key", asio::ssl::context::pem);
+        ssl_ctx.use_certificate_chain_file("cert/server.crt");
+        ssl_ctx.use_private_key_file("cert/server.key", asio::ssl::context::pem);
     }
     catch (const std::exception& ex)
     {

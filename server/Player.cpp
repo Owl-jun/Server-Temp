@@ -1,20 +1,17 @@
 #include "pch.h"
 #include "Player.hpp"
+#include "DBManager.hpp"
 
 Player::Player()
-	: nickname("")
-, position({ 0.f,0.f })
+	: id()
+	, name("")
+	, phone("")
 {
 }
 
-Player::Player(std::string _nickname, Pos _pos)
-	: nickname(_nickname)
-	, position(_pos)
-{
-}
-
-std::string Player::get_PlayerPos()
-{
-	std::string msg = position.GetString();
-	return msg;
+ void Player::set_from_db(const mysqlx::Row& row) 
+ {
+	 id = row[0].get<std::string>();
+	 name = row[1].get<std::string>();
+	 phone = row[2].get<std::string>();
 }

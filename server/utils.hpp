@@ -4,6 +4,12 @@
 #include <iomanip>
 #include <filesystem>
 #include <windows.h>
+#include <nlohmann/json.hpp>
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+// log 관련
 
 inline std::string get_current_date_string() {
     auto now = std::chrono::system_clock::now();
@@ -29,9 +35,9 @@ inline void set_debug_log() {
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [TID : %t] %v");
 
 #ifdef _DEBUG
-	spdlog::set_level(spdlog::level::debug); // 개발 중엔 다 찍어!
+	spdlog::set_level(spdlog::level::debug); // 디버그모드
 #else
-	spdlog::set_level(spdlog::level::warn);  // 릴리즈에선 경고 이상만!
+	spdlog::set_level(spdlog::level::warn);  // 릴리즈모드
 #endif
 }
 
@@ -45,4 +51,32 @@ inline std::string to_utf8(const std::string& cp949_str) {
     WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), -1, &utf8_str[0], utf8_len, nullptr, nullptr);
 
     return utf8_str;
+}
+
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+// json
+
+
+using json = nlohmann::json;
+
+inline bool set_dbInfo(std::string& ip, int& port, std::string& userId, std::string& pwd) 
+{
+    std::ifstream configFile("secure/dbcon.json");
+    if (!configFile.is_open()) {
+        std::cerr << "config.json 파일을 열 수 없습니다." << std::endl;
+        return false;
+    }
+
+    json config;
+    configFile >> config;
+
+    ip = config["DBINFO"]["IP"];
+    port = config["DBINFO"]["PORT"];
+    userId = config["DBINFO"]["DBID"];
+    pwd = config["DBINFO"]["PWD"];
+
+    return true;
 }

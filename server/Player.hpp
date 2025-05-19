@@ -1,18 +1,16 @@
 #pragma once
 #include "myStruct.hpp"
-
 /// <summary>
 /// 플레이어 클래스, 템플릿 입니다. 구현필요
 /// </summary>
 
 class Player {
+private:
+	std::string id;
+	std::string name;
+	std::string phone;
 public:
-	std::string nickname;
-	Pos position;
-
 	Player();
-	Player(std::string _nickname, Pos _pos);
-
-	std::string get_PlayerPos();
-
+	void set_from_db(const mysqlx::Row& row);
 };
+

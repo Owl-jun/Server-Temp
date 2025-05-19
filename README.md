@@ -42,18 +42,44 @@
     <br>
 - ISSUE LIST
 
-    - [X] 250518 / Session::push_WriteQueue 메서드 Lock 중첩 -> 데드락 발생 
-        - (250519 post 활용 해결)
+    - [ ] 250518 터미널 한글 깨짐 현상으로인해 디버깅 불편
     - [X] 250518 / pch.h 미리컴파일된 헤더 사용 & hpp 파일 사용시 헤더충돌 문제 
         - (250519 hpp/cpp 분할구현 및 헤더정리완료)
-    - [ ] 250518 터미널 한글 깨짐 현상으로인해 디버깅 불편
+    - [X] 250518 / Session::push_WriteQueue 메서드 Lock 중첩 -> 데드락 발생 
+        - (250519 post 활용 해결)
 ---
 #### 범용 템플릿화 시작
-##### 1회차 , 기존 프로그램 -> 템플릿화 리팩토링
+##### 1회차 , 기존 프로그램 -> 템플릿화 리팩토링 , DB 송수신 담당 클래스 설계
 - 기존 게임로직 삭제 및 코드 정리, 주석
 
 <img src="./img/NEW0001.png">
 <img src="./img/NEW0002.png">
+
+- DB 송수신 담당 클래스 설계
+    - 환경설정 : vcpkg install mysql-connector-cpp(vcpkg) , 헤더 : mysqlx/xdevapi.h 
+    - DBManager
+        : 범용성을 확보하기위해 최대한 쿼리 송 수신만 담당하게 하고싶었다.
+        : 여러가지 설계를 구상하던 도중 성능과 확장성을 잡기위해 세션풀 + 스레드풀 조합으로 결정
+        : DBManager (싱글톤) , 멤버 : 세션풀 , 스레드풀 , 모니터패턴을 조합하여 설계하기로 결정
+    - DB 서포트 유틸 클래스 & 메서드
+        1. set_dbInfo(ip,port,userId,pwd) : json에 저장된 DBconStr 정보를 긁어와서 클래스에 넣어준다.
+                                          : 파라미터를 레퍼런스로 사용하여 사용자는 DBConData 클래스만 넘겨주면 된다.
+        2. DBConData { ip, port, userId, pwd } : DBconStr 정보 담는 객체
+        3. DBTask { std::function<void(mysqlx::Session&)> func } : 함수 컨테이너, 범용성 확보를 위해 
+                                                                 Task별 실행할 함수를 등록할 수 있게끔 설계함
+        <br>
+    - 2회차에 DBManager 구현 예정 (캐싱X) -> 3회차 캐싱 도입 후 성능 비교
+            <br>
+        - 테스트 케이스 
+            - 동일 SELECT 쿼리 반복 요청    (캐시 적중률 높은 상황 성능)
+            - 대량 랜덤 SELECT 요청         (캐시 적중률 매우 낮은 상황 성능)
+            - INSERT/UPDATE 중심 테스트     (캐싱 불가영역의 I/O 처리 성능 측정)
+        - 테스트 포인트
+            - 평균 응답 시간 (ms)
+            - 초당 처리 쿼리수 (QPS)
+            - 세션 풀/스레드 풀 활용률
+            - CS 빈도                    
+
 
 
 ##### 회고록

@@ -1,5 +1,7 @@
-#pragma once
+ï»¿#pragma once
 #include "Player.hpp"
+#include "myStruct.hpp"
+#include "utils.hpp"
 using asio::ip::tcp;
 
 class Session : public std::enable_shared_from_this<Session> {
@@ -16,10 +18,10 @@ private:
 
 public:
 	/////////////////////////////
-	// »ı¼ºÀÚ
-	// TLS »ç¿ë½Ã
+	// ìƒì„±ì
+	// TLS ì‚¬ìš©ì‹œ
 	Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream);
-	// ¾Æ·¡»ı¼ºÀÚ »ç¿ë±İÁö, º¸¾È À§Çè
+	// ì•„ë˜ìƒì„±ì ì‚¬ìš©ê¸ˆì§€, ë³´ì•ˆ ìœ„í—˜
 	// Session(std::shared_ptr<tcp::socket> _socket); 
 	/////////////////////////////
 

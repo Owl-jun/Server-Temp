@@ -5,14 +5,20 @@
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
-    <ClCompile Include="Server.hpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="Session.cpp">
       <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="QueueManager.cpp">
       <Filter>QueueManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>SessionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Object\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -28,22 +34,43 @@
     <Filter Include="QueueManager">
       <UniqueIdentifier>{20276b53-8b18-43ff-b552-12e3c3b92321}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SessionManager">
+      <UniqueIdentifier>{0f3ca133-7d5e-4668-a6d3-f9a8acf56f21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Customs">
+      <UniqueIdentifier>{dd7a7aa8-817f-4572-baa4-49123991c59b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{271af419-d938-4c39-8ba2-d293da8df641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Player">
+      <UniqueIdentifier>{c52f0f19-f299-4b27-ad30-0bd67d04ff8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>pch</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
+    <ClInclude Include="Session.hpp">
       <Filter>Session</Filter>
     </ClInclude>
-    <ClInclude Include="SessionManager.hpp">
-      <Filter>Session</Filter>
-    </ClInclude>
-    <ClInclude Include="QueueManager.h">
+    <ClInclude Include="QueueManager.hpp">
       <Filter>QueueManager</Filter>
     </ClInclude>
-    <ClInclude Include="myStruct.hpp" />
-    <ClInclude Include="utils.hpp" />
-    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Server.hpp">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.hpp">
+      <Filter>SessionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="myStruct.hpp">
+      <Filter>Customs</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.hpp">
+      <Filter>Customs</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>Object\Player</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

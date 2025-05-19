@@ -1,4 +1,5 @@
-ï»¿#pragma once
+#pragma once
+#include "myStruct.hpp"
 
 class QueueManager
 {
@@ -21,7 +22,7 @@ public:
 	void run();
 
 private:
-    void process(Task& task); // ì‹¤ì œ ì‘ì—… ì‹¤í–‰ ë¡œì§
+    void process(Task& task); // ½ÇÁ¦ ÀÛ¾÷ ½ÇÇà ·ÎÁ÷
 
 };
 

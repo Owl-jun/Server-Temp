@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "Server.hpp"
-#include "QueueManager.h"
+#include "QueueManager.hpp"
 #include "SessionManager.hpp"
-
+#include "utils.hpp"
 ///////////////////////////////
 // 스레드 풀 스레드 개수 설정
 #define NET_CNT 3
@@ -13,7 +13,7 @@ int main() {
 	///////////////////////////////
 	// 로그 , 터미널 관련 세팅	 
 	// utils.hpp
-	SetConsoleOutputCP(CP_UTF8); 
+	//SetConsoleOutputCP(CP_UTF8); 
 	set_debug_log();	
 	///////////////////////////////
 
@@ -31,13 +31,13 @@ int main() {
 	for (int i = 0; i < NET_CNT; ++i) {
 		NetThreads.emplace_back(std::thread([&io_context] { io_context.run(); }));
 	}
-	spdlog::info("네트워크 스레드 실행완료");
+	spdlog::info(to_utf8("네트워크 스레드 실행완료"));
 
 	std::vector<std::thread> WorkerThreads;
 	for (int i = 0; i < WORK_CNT; ++i) {
 		WorkerThreads.emplace_back(std::thread([&QM] { QM.run(); }));
 	}
-	spdlog::info("일꾼 스레드 실행완료");
+	spdlog::info(to_utf8("일꾼 스레드 실행완료"));
 
 
 	// 일하러 나가신 부모님이 와야 잠들 수 있는 main 녀석 ..

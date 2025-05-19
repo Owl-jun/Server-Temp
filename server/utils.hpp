@@ -1,7 +1,9 @@
-ï»¿#pragma once
+#pragma once
 #include "pch.h"
+#include <fstream>
 #include <iomanip>
 #include <filesystem>
+#include <windows.h>
 
 inline std::string get_current_date_string() {
     auto now = std::chrono::system_clock::now();
@@ -27,9 +29,20 @@ inline void set_debug_log() {
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [TID : %t] %v");
 
 #ifdef _DEBUG
-	spdlog::set_level(spdlog::level::debug); // ê°œë°œ ì¤‘ì—” ë‹¤ ì°ì–´!
+	spdlog::set_level(spdlog::level::debug); // °³¹ß Áß¿£ ´Ù Âï¾î!
 #else
-	spdlog::set_level(spdlog::level::warn);  // ë¦´ë¦¬ì¦ˆì—ì„  ê²½ê³  ì´ìƒë§Œ!
+	spdlog::set_level(spdlog::level::warn);  // ¸±¸®Áî¿¡¼± °æ°í ÀÌ»ó¸¸!
 #endif
 }
 
+inline std::string to_utf8(const std::string& cp949_str) {
+    int wide_len = MultiByteToWideChar(949, 0, cp949_str.c_str(), -1, nullptr, 0);
+    std::wstring wide_str(wide_len, 0);
+    MultiByteToWideChar(949, 0, cp949_str.c_str(), -1, &wide_str[0], wide_len);
+
+    int utf8_len = WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string utf8_str(utf8_len, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), -1, &utf8_str[0], utf8_len, nullptr, nullptr);
+
+    return utf8_str;
+}

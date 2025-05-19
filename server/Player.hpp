@@ -1,29 +1,6 @@
 #pragma once
 #include "myStruct.hpp"
 
-struct Pos {
-	double x;
-	double y;
-
-	Pos()
-		: x(0.f)
-		, y(0.f)
-	{
-	}
-
-	Pos(double _x, double _y)
-		: x(_x)
-		, y(_y)
-	{
-	}
-
-	std::string GetString()
-	{
-		std::string str = std::to_string(x) + " " + std::to_string(y);
-		return str;
-	}
-};
-
 /// <summary>
 /// 플레이어 클래스, 템플릿 입니다. 구현필요
 /// </summary>
@@ -33,20 +10,9 @@ public:
 	std::string nickname;
 	Pos position;
 
-	Player()
-		: nickname("")
-		, position({ 0.f,0.f })
-	{
-	}
-	Player(std::string _nickname, Pos _pos)
-		: nickname(_nickname)
-		, position(_pos)
-	{
-	}
+	Player();
+	Player(std::string _nickname, Pos _pos);
 
-	std::string get_PlayerPos()
-	{
-		std::string msg = position.GetString();
-		return msg;
-	}
+	std::string get_PlayerPos();
+
 };

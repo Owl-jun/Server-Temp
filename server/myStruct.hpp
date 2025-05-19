@@ -1,6 +1,8 @@
 #pragma once
-#include "pch.h"
-#include "Session.h"
+class Session;
+
+///////////////////////////////////////
+
 
 struct Task {
 	std::shared_ptr<Session> session;
@@ -8,4 +10,25 @@ struct Task {
 };
 
 
+struct Pos {
+	double x;
+	double y;
 
+	Pos()
+		: x(0.f)
+		, y(0.f)
+	{
+	}
+
+	Pos(double _x, double _y)
+		: x(_x)
+		, y(_y)
+	{
+	}
+
+	std::string GetString()
+	{
+		std::string str = std::to_string(x) + " " + std::to_string(y);
+		return str;
+	}
+};

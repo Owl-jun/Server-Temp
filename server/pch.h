@@ -1,6 +1,6 @@
-ï»¿#pragma once
+#pragma once
 
-// ê¸°ë³¸ STL
+// ±âº» STL
 #include <iostream>
 #include <string>
 #include <memory>
@@ -16,24 +16,20 @@
 #include <atomic>
 #include <chrono>
 #include <ctime>
-#include <fstream>
+
 
 // json
 #include <nlohmann/json.hpp>
 
-// ë¡œê·¸
+// ·Î±×
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-// ë„¤íŠ¸ì›Œí¬
+// ³×Æ®¿öÅ©
 #include <asio.hpp>
 
 // TSL
 #include <asio/ssl.hpp>
 
-// ì»¤ìŠ¤í…€ êµ¬ì¡°ì²´
-#include "myStruct.hpp"
-#include "utils.hpp"
-
-// ë„¤ì„ìŠ¤í˜ì´ìŠ¤
+// ³×ÀÓ½ºÆäÀÌ½º
 using asio::ip::tcp;

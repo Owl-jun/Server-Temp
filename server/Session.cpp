@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
-#include "Session.h"
-#include "QueueManager.h"
+#include "Session.hpp"
+#include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "myStruct.hpp"
+//#include "utils.hpp"
+
 
 Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 	: ssl_stream(stream)
@@ -82,7 +85,7 @@ void Session::do_write()
 			}
 			else
 			{
-				spdlog::info(std::format("[Session::do_write()] 에러 발생 -> {} ", ec.message()));
+				spdlog::info("[Session::do_write()] 에러 발생 -> {} ", ec.message());
 				self->Close();
 			}
 		});
@@ -109,7 +112,7 @@ bool Session::isValid(const std::string& packet)
 void Session::Close()
 {
 	std::cout << "[Session::Close] 세션 종료" << std::endl;
-	spdlog::info(std::format("[Session::Close] 세션 ID : {}", id));
+	spdlog::info("[Session::Close] 세션 ID : {}", std::to_string(id));
 	std::error_code ec;
 	ssl_stream->shutdown(ec);
 	SessionManager::GetInstance().DelSession(id);

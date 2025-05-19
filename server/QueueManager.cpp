@@ -1,6 +1,7 @@
-ï»¿#include "pch.h"
-#include "QueueManager.h"
+#include "pch.h"
+#include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "Session.hpp"
 
 void QueueManager::push(const Task& task)
 {
@@ -22,15 +23,15 @@ void QueueManager::run()
         TaskQueue.pop();
         lock.unlock();
 
-        //std::cout << "[QueueManager::run] TaskQueue ì— ì‘ì—…ì´ ìˆìŠµë‹ˆë‹¤. ì‘ì—… ì§„í–‰ -> " << task.message << std::endl;
+        //std::cout << "[QueueManager::run] TaskQueue ¿¡ ÀÛ¾÷ÀÌ ÀÖ½À´Ï´Ù. ÀÛ¾÷ ÁøÇà -> " << task.message << std::endl;
         process(task);
     }
 }
 
 /// <summary>
-/// ìœ íš¨í•œ íŒ¨í‚· ID ì‘ì—… ì²˜ë¦¬ ë¡œì§
+/// À¯È¿ÇÑ ÆĞÅ¶ ID ÀÛ¾÷ Ã³¸® ·ÎÁ÷
 /// </summary>
-/// <param name="task">session , message ë¡œ êµ¬ì„±ëœ êµ¬ì¡°ì²´</param>
+/// <param name="task">session , message ·Î ±¸¼ºµÈ ±¸Á¶Ã¼</param>
 void QueueManager::process(Task& task)
 {
     auto& session = task.session;
@@ -61,5 +62,5 @@ void QueueManager::process(Task& task)
     {
     }
 
-    std::cout << "[QueueManager::process] Task ì‘ì—… ì™„ë£Œ -> " << msg << std::endl;
+    std::cout << "[QueueManager::process] Task ÀÛ¾÷ ¿Ï·á -> " << msg << std::endl;
 }

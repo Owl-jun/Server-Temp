@@ -1,5 +1,6 @@
 #pragma once
 #include "myStruct.hpp"
+
 struct Pos {
 	double x;
 	double y;
@@ -22,6 +23,10 @@ struct Pos {
 		return str;
 	}
 };
+
+/// <summary>
+/// 플레이어 클래스, 템플릿 입니다. 구현필요
+/// </summary>
 
 class Player {
 public:

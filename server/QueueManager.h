@@ -22,7 +22,6 @@ public:
 
 private:
     void process(Task& task); // 실제 작업 실행 로직
-    
 
 };
 

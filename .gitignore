@@ -404,3 +404,4 @@ FodyWeavers.xsd
 *.crt
 *.key
 secure/
+cert/

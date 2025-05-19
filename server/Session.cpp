@@ -112,7 +112,7 @@ bool Session::isValid(const std::string& packet)
 void Session::Close()
 {
 	std::cout << "[Session::Close] 세션 종료" << std::endl;
-	spdlog::info("[Session::Close] 세션 ID : {}", std::to_string(id));
+	spdlog::info(to_utf8(std::format("[Session::Close] SESSION ID : {}", std::to_string(id))));
 	std::error_code ec;
 	ssl_stream->shutdown(ec);
 	SessionManager::GetInstance().DelSession(id);

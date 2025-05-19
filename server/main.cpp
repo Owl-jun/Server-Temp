@@ -13,7 +13,7 @@ int main() {
 	///////////////////////////////
 	// 로그 , 터미널 관련 세팅	 
 	// utils.hpp
-	//SetConsoleOutputCP(CP_UTF8); 
+	SetConsoleOutputCP(949); 
 	set_debug_log();	
 	///////////////////////////////
 

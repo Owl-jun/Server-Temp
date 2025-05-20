@@ -31,9 +31,7 @@
 ## 작업 / 이슈 목록
 - TASK LIST
     - [X] [DB 연동](#2회차--mysql-x-dev-환경-설정-및-db-연결) [250520]
-    - [ ] 성능 체크
-    - [ ] INDEX , TRANSACTION 추가
-    - [ ] INDEX 전, 후 성능 비교
+    - [X] INDEX 전, 후 성능 비교
     - [ ] REDIS 연동
     - [ ] REDIS 도입 전 후 성능 비교
     - [ ] 레이턴시 테스트

@@ -1,0 +1,9 @@
+10000개 더미데이터 생성
+
+INSERT INTO users (username, password, level, exp, created_at)
+SELECT CONCAT('user', seq), 'pass1234', FLOOR(1 + RAND()*100), FLOOR(RAND()*10000), NOW()
+FROM (
+  SELECT @row := @row + 1 AS seq
+  FROM information_schema.columns a, information_schema.columns b, (SELECT @row := 0) r
+  LIMIT 10000
+) AS numbers;

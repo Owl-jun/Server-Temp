@@ -70,13 +70,21 @@ inline bool set_dbInfo(std::string& ip, int& port, std::string& userId, std::str
         return false;
     }
 
-    json config;
-    configFile >> config;
+    try
+    {
+        json config;
+        configFile >> config;
 
-    ip = config["DBINFO"]["IP"];
-    port = config["DBINFO"]["PORT"];
-    userId = config["DBINFO"]["DBID"];
-    pwd = config["DBINFO"]["PWD"];
+        ip = config["DBINFO"]["IP"];
+        port = config["DBINFO"]["PORT"];
+        userId = config["DBINFO"]["DBID"];
+        pwd = config["DBINFO"]["PWD"];
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "json 작업 실패 : " << e.what() << std::endl;
+        return false;
+    }
 
     return true;
 }

@@ -2,6 +2,7 @@
 #include "Server.hpp"
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "DBManager.hpp"
 #include "utils.hpp"
 ///////////////////////////////
 // 스레드 풀 스레드 개수 설정
@@ -20,6 +21,7 @@ int main() {
 	// 싱글톤 객체 명시적 생성
 	SessionManager& SM = SessionManager::GetInstance();
 	QueueManager& QM = QueueManager::GetInstance();
+	DBManager& DM = DBManager::GetInstance();
 	///////////////////////////////
 
 

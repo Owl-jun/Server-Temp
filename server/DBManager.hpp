@@ -1,24 +1,29 @@
 ﻿#pragma once
 
+#include "myStruct.hpp"
 #include "utils.hpp"
 #include <iostream>
 #include <mysqlx/xdevapi.h>
 
+
+
 struct DBConData {
 	DBConData() {
 		set_dbInfo(ip, port, userId, pwd);
-	};
+		std::cout << "[DBManager] IP: " << ip
+			<< ", Port: " << port
+			<< ", ID: " << userId
+			<< ", PWD: " << pwd << std::endl;
 
+	};
+	
 	std::string ip;
 	int port;
 	std::string userId;
 	std::string pwd;
 };
 
-class DBTask {
-public:
-	std::function<void(mysqlx::Session&)> func;
-};
+
 
 class DBManager {
 	std::thread worker;              // 전용 스레드 (task 실행 loop)
@@ -61,6 +66,7 @@ private:
 		, session(conData.ip, conData.port, conData.userId, conData.pwd)
 		
 	{
+		std::cout << "DB Connection Suc !!" << std::endl;
 		worker = std::thread([this]() { run(); });
 	}
 };

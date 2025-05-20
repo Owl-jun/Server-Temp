@@ -1,14 +1,24 @@
 #pragma once
+#include <mysqlx/xdevapi.h>
 class Session;
 
 ///////////////////////////////////////
 
 
-struct Task {
+class Task {
+public:
 	std::shared_ptr<Session> session;
 	std::string message;
 };
 
+/// <summary>
+/// 
+/// </summary>
+class DBTask {
+public:
+	int sessionIndex;
+	std::function<void(mysqlx::Session&)> func;
+};
 
 struct Pos {
 	double x;

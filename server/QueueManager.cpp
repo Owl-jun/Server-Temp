@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "DBManager.hpp"
 #include "Session.hpp"
 
 void QueueManager::push(const Task& task)
@@ -52,8 +53,37 @@ void QueueManager::process(Task& task)
         session->push_WriteQueue(std::make_shared<std::string>("one-to-one test\n"));
         SessionManager::GetInstance().BroadCast(std::make_shared<std::string>("BroadCasting test\n"));
     }
-    else if (ID == "LOGIN")
+    else if (ID == "LOGIN") // 기능 TEST
     {
+        std::string uname, pwd;
+        iss >> uname >> pwd;
+        DBTask task;
+        task.func = [uname, pwd](mysqlx::Session& s) {
+
+            std::cout << "일단 task 실행됨" << std::endl;
+            mysqlx::Schema db = s.getSchema("mydb");
+            mysqlx::Table users = db.getTable("users");
+
+            auto res = users.select("username", "password")
+                .where("username = :uname AND password = :pwd")
+                .bind("uname", uname)
+                .bind("pwd", pwd)
+                .execute();
+
+            if (res.count() <= 0) {
+                std::cout << "로그인실패 ~" << std::endl;
+            }
+            else {
+                for (auto row : res)
+                {
+                    std::cout << "ID : " << row[0].get<std::string>()
+                        << ", PWD : " << row[1].get<std::string>() << std::endl;
+                    std::cout << "로그인 성공!" << std::endl;
+                }
+            }
+        };
+
+        DBManager::GetInstance().PushTask(task);
     }
     else if (ID == "CHAT")
     {

@@ -15,6 +15,7 @@
 ### 개발일지
 #### 범용 템플릿화 시작 (250519~)
 1. [범용성 확보 리팩토링 & DB관련 기능 설계](#1회차--기존-프로그램---템플릿화-리팩토링--db-송수신-담당-클래스-설계)
+2. [DB 연동](#2회차--mysql-x-dev-환경-설정-및-db-연결)
 - [개발일기장](#회고록)
 
 #### 기존 개발일지 (~250519)
@@ -29,7 +30,7 @@
 ---
 ## 작업 / 이슈 목록
 - TASK LIST
-    - [ ] DB 연동
+    - [X] [DB 연동](#2회차--mysql-x-dev-환경-설정-및-db-연결) [250520]
     - [ ] 성능 체크
     - [ ] INDEX , TRANSACTION 추가
     - [ ] INDEX 전, 후 성능 비교
@@ -49,6 +50,42 @@
         - (250519 post 활용 해결)
 ---
 #### 범용 템플릿화 시작
+##### 2회차 , MySQL X Dev 환경 설정 및 DB 연결
+- DBMS : MySQL / xDevAPI
+- docker.desktop [mysql 서버 구동]
+```
+컨테이너 생성시 옵션설정
+docker run -d \
+  --name my-mysql \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -p 3306:3306 -p 33060:33060 \
+  mysql:8.0 \
+  --mysqlx=ON \
+  --mysqlx_port=33060 \
+  --mysqlx_bind_address=0.0.0.0
+
+터미널 환경에서 DBMS 사용
+mysqlsh 설치
+
+mysqlsh --uri root@127.0.0.1:33060
+\sql  : SQL 모드로 전환
+```
+- 테스트용 DB 생성
+    
+    <img src="./img/DB0001.png" width = 600>
+
+- 테이블 생성 및 테스트 데이터 삽입
+
+    <img src="./img/DB0002.png" width = 600>
+
+- DB 연동 테스트
+    - 가상의 (테스트용) 로그인 시스템 구현
+    - 클라 -> LOGIN ID PWD -> 서버 파싱 후 DB 쿼리 송수신
+
+    <img src="./img/DB0003.png" width = 600>
+
+- 세션풀 , 스레드풀 도입으로 대규모 요청상황 대비
+
 ##### 1회차 , 기존 프로그램 -> 템플릿화 리팩토링 , DB 송수신 담당 클래스 설계
 - 기존 게임로직 삭제 및 코드 정리, 주석
 

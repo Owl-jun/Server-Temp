@@ -1,5 +1,6 @@
 #pragma once
-#include "myStruct.hpp"
+#include <mysqlx/xdevapi.h>
+
 /// <summary>
 /// 플레이어 클래스, 템플릿 입니다. 구현필요
 /// </summary>

@@ -50,6 +50,40 @@
         - (250519 post 활용 해결)
 ---
 ### 범용 템플릿화 시작
+
+#### 1회차 , 기존 프로그램 -> 템플릿화 리팩토링 , DB 송수신 담당 클래스 설계
+- 기존 게임로직 삭제 및 코드 정리, 주석
+
+<img src="./img/NEW0001.png">
+<img src="./img/NEW0002.png">
+
+- DB 송수신 담당 클래스 설계
+    - 환경설정 : vcpkg install mysql-connector-cpp(vcpkg) , 헤더 : mysqlx/xdevapi.h 
+    - DBManager
+        - 범용성을 확보하기위해 최대한 쿼리 송 수신만 담당하게 하고싶었다.
+        - 여러가지 설계를 구상하던 도중 성능과 확장성을 잡기위해 세션풀 + 스레드풀 조합으로 결정
+        - DBManager (싱글톤) , 멤버 : 세션풀 , 스레드풀 , 모니터패턴을 조합하여 설계하기로 결정
+    - DB 서포트 유틸 클래스 & 메서드
+        1. set_dbInfo(ip,port,userId,pwd) : json에 저장된 DBconStr 정보를 긁어와서 클래스에 넣어준다.
+                                          : 파라미터를 레퍼런스로 사용하여 사용자는 DBConData 클래스만 넘겨주면 된다.
+        2. DBConData { ip, port, userId, pwd } : DBconStr 정보 담는 객체
+        3. DBTask { std::function<void(mysqlx::Session&)> func } : 함수 컨테이너, 범용성 확보를 위해 
+                                                                 Task별 실행할 함수를 등록할 수 있게끔 설계함
+        <br>
+    - 2회차에 DBManager 구현 예정 (캐싱X) -> 3회차 캐싱 도입 후 성능 비교
+            <br>
+        - 테스트 케이스 
+            - 동일 SELECT 쿼리 반복 요청    (캐시 적중률 높은 상황 성능)
+            - 대량 랜덤 SELECT 요청         (캐시 적중률 매우 낮은 상황 성능)
+            - INSERT/UPDATE 중심 테스트     (캐싱 불가영역의 I/O 처리 성능 측정)
+        - 테스트 포인트
+            - 평균 응답 시간 (ms)
+            - 초당 처리 쿼리수 (QPS)
+            - 세션 풀/스레드 풀 활용률
+            - CS 빈도                    
+
+---
+
 #### 2회차 , MySQL X Dev 환경 설정 및 DB 연결
 - DBMS : MySQL / xDevAPI
 - docker.desktop [mysql 서버 구동]
@@ -84,41 +118,23 @@ mysqlsh --uri root@127.0.0.1:33060
 
     <img src="./img/DB0003.png" width = 600>
 
+- DB 인덱스 추가로 성능 높혀보기
+    - 인덱스 X 응답시간 : 평균 90000μs 초반을 보임, 단위 :(μs)
+
+        <img src="./img/NO_INDEX.png" width=700>
+
+    - 인덱스 추가 (테스트를 위한 로그인 기능, username , pwd 를 묶어서 인덱스생성)
+
+        <img src="./img/MAKE_INDEX.png" width=700>
+
+    
+    - 인덱스 추가 후 응답시간 : 평균 2300~2600μs 사이의 시간을 보임, 약 **1/32 의 시간을 절감**
+        - 성능이 32배 좋아졌다로 귀결 , 인덱스의 중요성을 체감
+        - 하지만 인덱스 사용시 성능이 저하되는 경우도 있어 주의해서 사용해야한다.
+
+        <img src="./img/AFTER_INDEX.png" width=700>
+
 - 세션풀 , 스레드풀 도입으로 대규모 요청상황 대비
-
----
-
-#### 1회차 , 기존 프로그램 -> 템플릿화 리팩토링 , DB 송수신 담당 클래스 설계
-- 기존 게임로직 삭제 및 코드 정리, 주석
-
-<img src="./img/NEW0001.png">
-<img src="./img/NEW0002.png">
-
-- DB 송수신 담당 클래스 설계
-    - 환경설정 : vcpkg install mysql-connector-cpp(vcpkg) , 헤더 : mysqlx/xdevapi.h 
-    - DBManager
-        - 범용성을 확보하기위해 최대한 쿼리 송 수신만 담당하게 하고싶었다.
-        - 여러가지 설계를 구상하던 도중 성능과 확장성을 잡기위해 세션풀 + 스레드풀 조합으로 결정
-        - DBManager (싱글톤) , 멤버 : 세션풀 , 스레드풀 , 모니터패턴을 조합하여 설계하기로 결정
-    - DB 서포트 유틸 클래스 & 메서드
-        1. set_dbInfo(ip,port,userId,pwd) : json에 저장된 DBconStr 정보를 긁어와서 클래스에 넣어준다.
-                                          : 파라미터를 레퍼런스로 사용하여 사용자는 DBConData 클래스만 넘겨주면 된다.
-        2. DBConData { ip, port, userId, pwd } : DBconStr 정보 담는 객체
-        3. DBTask { std::function<void(mysqlx::Session&)> func } : 함수 컨테이너, 범용성 확보를 위해 
-                                                                 Task별 실행할 함수를 등록할 수 있게끔 설계함
-        <br>
-    - 2회차에 DBManager 구현 예정 (캐싱X) -> 3회차 캐싱 도입 후 성능 비교
-            <br>
-        - 테스트 케이스 
-            - 동일 SELECT 쿼리 반복 요청    (캐시 적중률 높은 상황 성능)
-            - 대량 랜덤 SELECT 요청         (캐시 적중률 매우 낮은 상황 성능)
-            - INSERT/UPDATE 중심 테스트     (캐싱 불가영역의 I/O 처리 성능 측정)
-        - 테스트 포인트
-            - 평균 응답 시간 (ms)
-            - 초당 처리 쿼리수 (QPS)
-            - 세션 풀/스레드 풀 활용률
-            - CS 빈도                    
-
 
 
 #### 회고록

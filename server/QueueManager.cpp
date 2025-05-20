@@ -3,6 +3,7 @@
 #include "SessionManager.hpp"
 #include "DBManager.hpp"
 #include "Session.hpp"
+#include <chrono>
 
 void QueueManager::push(const Task& task)
 {
@@ -60,15 +61,23 @@ void QueueManager::process(Task& task)
         DBTask task;
         task.func = [uname, pwd](mysqlx::Session& s) {
 
-            std::cout << "일단 task 실행됨" << std::endl;
             mysqlx::Schema db = s.getSchema("mydb");
             mysqlx::Table users = db.getTable("users");
 
+            // 응답 시간 TEST ms
+            auto start = std::chrono::high_resolution_clock::now();
+            
+            // query execute
             auto res = users.select("username", "password")
                 .where("username = :uname AND password = :pwd")
                 .bind("uname", uname)
                 .bind("pwd", pwd)
                 .execute();
+
+            // 응답 시간 TEST ms
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "query execute time : " << duration << std::endl;
 
             if (res.count() <= 0) {
                 std::cout << "로그인실패 ~" << std::endl;

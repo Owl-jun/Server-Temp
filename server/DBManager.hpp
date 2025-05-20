@@ -23,8 +23,6 @@ struct DBConData {
 	std::string pwd;
 };
 
-
-
 class DBManager {
 	std::thread worker;              // 전용 스레드 (task 실행 loop)
 	std::queue<DBTask> queue;        // 외부에서 요청 push

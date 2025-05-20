@@ -118,6 +118,7 @@ mysqlsh --uri root@127.0.0.1:33060
     <img src="./img/DB0003.png" width = 600>
 
 ##### DB 인덱스 추가로 성능 높혀보기
+- 성능 개선
     - 인덱스 X 응답시간 : 평균 90000μs 초반을 보임, 단위 :(μs)
 
         <img src="./img/NO_INDEX.png" width=700>

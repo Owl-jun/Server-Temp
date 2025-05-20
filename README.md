@@ -310,7 +310,7 @@ mysqlsh --uri root@127.0.0.1:33060
     - close() 대신 shutdown() 혹은 ssl_stream->async_shutdown() 호출이 필요하다.
 
 - 짤막한 지식 추가
-    - TCP 커넥션 -> **TSL 커넥션**
+    - TCP 커넥션 -> **TLS 커넥션**
     - TLS 커넥션 (RSA)
         - 클라이언트 : TLS버전, 암호화 방식 목록, 랜덤 값 -> 서버
         - 서버 : 선택된 암호화 방식, 서버 공개키 인증서, 서버 랜덤 값 -> 클라
@@ -347,7 +347,7 @@ Common Name (e.g. server FQDN or YOUR name) []: localhost ## 실 서비스라면
     CHAT OK 가 적나라하게 노출된 모습
     <br>
     - TLS 적용 후 (와이어샤크)
-        - 해결 : TSL 적용 후 암호화된 데이터가 노출되어 조작 위협방지
+        - 해결 : TLS 적용 후 암호화된 데이터가 노출되어 조작 위협방지
         
         <img src="./img/TSL.png" width=650>
         <img src="./img/WireShark.png" width=650>

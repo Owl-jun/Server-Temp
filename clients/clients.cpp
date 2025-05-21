@@ -24,7 +24,7 @@ void send(std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> soc, int cou
 
 int main() {
     std::vector<std::thread> testpool;
-    for (int count = 1; count < 5000; ++count)
+    for (int count = 1; count < 500; ++count)
     {
         testpool.emplace_back([count]() {
             asio::io_context io_context;

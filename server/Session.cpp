@@ -12,7 +12,8 @@ Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 	, player()
 	, id(SessionManager::make_UniqueId())
 {
-	spdlog::info(std::format("[Session] 세션 생성 세션ID : {}", id));
+	std::cout << "세션 생성 , 현재 세션 수 : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
+	spdlog::info(std::format("[Session] 세션 생성 세션ID : {}, UserCount : {}", id, std::to_string(SessionManager::GetInstance().UserCount())));
 }
 
 void Session::start()
@@ -111,10 +112,11 @@ bool Session::isValid(const std::string& packet)
 
 void Session::Close()
 {
-	std::cout << "[Session::Close] 세션 종료" << std::endl;
-	spdlog::info(to_utf8(std::format("[Session::Close] SESSION ID : {}", std::to_string(id))));
+	std::cout << "[Session::Close] 세션 종료 현재 유저 수 : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
+	spdlog::info(to_utf8(std::format("[Session::Close] SESSION ID : {} , CurUserCount : {}", std::to_string(id), std::to_string(SessionManager::GetInstance().UserCount()))));
 	std::error_code ec;
-	ssl_stream->shutdown(ec);
 	SessionManager::GetInstance().DelSession(id);
+	ssl_stream->lowest_layer().cancel();
+	ssl_stream->shutdown(ec);
 }
 

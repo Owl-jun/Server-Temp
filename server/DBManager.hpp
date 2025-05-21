@@ -4,17 +4,11 @@
 #include "utils.hpp"
 #include <iostream>
 #include <mysqlx/xdevapi.h>
-
-
+#include <chrono>
 
 struct DBConData {
 	DBConData() {
 		set_dbInfo(ip, port, userId, pwd);
-		std::cout << "[DBManager] IP: " << ip
-			<< ", Port: " << port
-			<< ", ID: " << userId
-			<< ", PWD: " << pwd << std::endl;
-
 	};
 	
 	std::string ip;
@@ -30,14 +24,17 @@ class DBManager {
 	DBConData conData;
 
 	std::queue<DBTask> queue;        // Task Queue
+	// mysqlx::Session session;
+	// std::thread worker;
 
-	mysqlx::Session session;		 // 전용 세션 풀
-	std::thread worker;              // 전용 스레드 풀
+	std::vector<mysqlx::Session> sessions;		 // 전용 세션 풀
+	std::vector<std::thread> workers;              // 전용 스레드 풀
 
 	bool running = true;
 
-	void run() {
+	void run(int idx) {
 		while (running) {
+			auto& session = sessions[idx];
 			DBTask task;
 			{
 				std::unique_lock lock(mtx);
@@ -45,7 +42,17 @@ class DBManager {
 				task = std::move(queue.front());
 				queue.pop();
 			}
-			task.func(session);  
+			// 응답 시간 TEST ms
+			auto start = std::chrono::high_resolution_clock::now();
+
+			// 세션 풀 중 유휴 세션을 찾는 로직 구현해야함
+			task.func(session);
+
+
+			// 응답 시간 TEST ms
+			auto end = std::chrono::steady_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+			spdlog::info("[DBThread {}] query response time: {}us", idx, elapsed);
 		}
 	}
 public:
@@ -65,11 +72,17 @@ public:
 private:
 	DBManager() 
 		: conData()
-		, session(conData.ip, conData.port, conData.userId, conData.pwd)
-		
 	{
+		for (int i = 0; i < 5; ++i)
+		{
+			sessions.emplace_back(mysqlx::Session(conData.ip, conData.port, conData.userId, conData.pwd));
+		}
+		for (int j = 0; j < 5; ++j)
+		{
+			workers.emplace_back(std::thread([this,j]() { run(j); }));
+		}
+		
 		std::cout << "DB Connection Suc !!" << std::endl;
-		worker = std::thread([this]() { run(); });
 	}
 };
 

@@ -3,7 +3,6 @@
 #include "SessionManager.hpp"
 #include "DBManager.hpp"
 #include "Session.hpp"
-#include <chrono>
 
 void QueueManager::push(const Task& task)
 {
@@ -60,35 +59,35 @@ void QueueManager::process(Task& task)
         iss >> uname >> pwd;
         DBTask task;
         task.func = [uname, pwd](mysqlx::Session& s) {
+            try {
+                mysqlx::Schema db = s.getSchema("mydb");
+                mysqlx::Table users = db.getTable("users");
 
-            mysqlx::Schema db = s.getSchema("mydb");
-            mysqlx::Table users = db.getTable("users");
+                auto res = users.select("username", "password")
+                    .where("username = :uname AND password = :pwd")
+                    .bind("uname", uname)
+                    .bind("pwd", pwd)
+                    .execute();
 
-            // 응답 시간 TEST ms
-            auto start = std::chrono::high_resolution_clock::now();
-            
-            // query execute
-            auto res = users.select("username", "password")
-                .where("username = :uname AND password = :pwd")
-                .bind("uname", uname)
-                .bind("pwd", pwd)
-                .execute();
-
-            // 응답 시간 TEST ms
-            auto end = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            std::cout << "query execute time : " << duration << std::endl;
-
-            if (res.count() <= 0) {
-                std::cout << "로그인실패 ~" << std::endl;
-            }
-            else {
-                for (auto row : res)
-                {
-                    std::cout << "ID : " << row[0].get<std::string>()
-                        << ", PWD : " << row[1].get<std::string>() << std::endl;
-                    std::cout << "로그인 성공!" << std::endl;
+                if (res.count() <= 0) {
+                    std::cout << "[LOGIN 실패] 유저 정보 없음\n";
                 }
+                else {
+                    for (auto row : res) {
+                        std::string name = row[0].get<std::string>();
+                        std::string pw = row[1].get<std::string>();
+                        std::cout << "[LOGIN 성공] ID: " << name << ", PWD: " << pw << "\n";
+                    }
+                }
+            }
+            catch (const mysqlx::Error& e) {
+                std::cerr << "[LOGIN 쿼리 예외] MySQL 오류: " << e.what() << "\n";
+            }
+            catch (const std::exception& e) {
+                std::cerr << "[LOGIN 예외] std::예외: " << e.what() << "\n";
+            }
+            catch (...) {
+                std::cerr << "[LOGIN 예외] 알 수 없는 예외 발생\n";
             }
         };
 

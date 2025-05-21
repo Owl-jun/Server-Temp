@@ -29,5 +29,5 @@ public:
 	// get, set
 	std::vector<std::string>& getValidIds();
 	std::vector<std::weak_ptr<Session>>& get_Sessions();
-
+	int UserCount();
 };

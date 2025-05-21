@@ -148,6 +148,7 @@
     <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CacheManager.hpp" />
     <ClInclude Include="DBManager.hpp" />
     <ClInclude Include="myStruct.hpp" />
     <ClInclude Include="pch.h" />

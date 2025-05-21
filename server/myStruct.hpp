@@ -16,7 +16,7 @@ public:
 /// </summary>
 class DBTask {
 public:
-	int sessionIndex;
+	//int sessionIndex;
 	std::function<void(mysqlx::Session&)> func;
 };
 

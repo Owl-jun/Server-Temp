@@ -229,7 +229,8 @@ mysqlsh --uri root@127.0.0.1:33060
         - 2. miss : DB Task Input -> 체크 -> miss -> DB 매니저 -> 데이터 사용 후 캐시에 저장
 
 - 테스트 결과
-    
+
+    https://github.com/user-attachments/assets/4051a489-ee14-4275-8ce5-f3bfc0618ead
 
 - 10초마다 TTL이 만료된 캐시데이터를 삭제해주는 cleanup() 메서드 실행
 - 캐시 miss 시 DB -> Set() 메서드

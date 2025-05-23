@@ -20,6 +20,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Object\Player</Filter>
     </ClCompile>
+    <ClCompile Include="LoginCache.cpp">
+      <Filter>CacheSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pch">
@@ -49,7 +52,7 @@
     <Filter Include="DBManager">
       <UniqueIdentifier>{aba134ab-1243-4607-884f-24440e2e92e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CacheManager">
+    <Filter Include="CacheSystem">
       <UniqueIdentifier>{bef6b5b7-6494-44c1-8672-6baa5610c36d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -81,8 +84,11 @@
     <ClInclude Include="DBManager.hpp">
       <Filter>DBManager</Filter>
     </ClInclude>
-    <ClInclude Include="CacheManager.hpp">
-      <Filter>CacheManager</Filter>
+    <ClInclude Include="LoginCache.hpp">
+      <Filter>CacheSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ICache.hpp">
+      <Filter>CacheSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

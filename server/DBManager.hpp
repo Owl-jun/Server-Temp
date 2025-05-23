@@ -6,6 +6,8 @@
 #include <mysqlx/xdevapi.h>
 #include <chrono>
 
+#define DBWORKER_CNT 2
+
 struct DBConData {
 	DBConData() {
 		set_dbInfo(ip, port, userId, pwd);
@@ -39,6 +41,10 @@ class DBManager {
 			{
 				std::unique_lock lock(mtx);
 				cv.wait(lock, [&] { return !queue.empty(); });
+
+				if (!running && queue.empty())  
+					return;
+
 				task = std::move(queue.front());
 				queue.pop();
 			}
@@ -55,6 +61,21 @@ class DBManager {
 			spdlog::info("[DBThread {}] query response time: {}us", idx, elapsed);
 		}
 	}
+
+	void stop() {
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			running = false;
+		}
+
+		cv.notify_all();  // ✅ 모든 대기 중인 스레드 깨움
+
+		for (auto& worker : workers) {
+			if (worker.joinable())
+				worker.join();  // ✅ 안전하게 종료 대기
+		}
+	}
+
 public:
 	static DBManager& GetInstance() {
 		static DBManager instance;
@@ -73,11 +94,11 @@ private:
 	DBManager() 
 		: conData()
 	{
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < DBWORKER_CNT; ++i)
 		{
 			sessions.emplace_back(mysqlx::Session(conData.ip, conData.port, conData.userId, conData.pwd));
 		}
-		for (int j = 0; j < 5; ++j)
+		for (int j = 0; j < DBWORKER_CNT; ++j)
 		{
 			workers.emplace_back(std::thread([this,j]() { run(j); }));
 		}

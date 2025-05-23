@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "LoginCache.hpp"
 #include "DBManager.hpp"
 #include "Session.hpp"
 
@@ -57,41 +58,56 @@ void QueueManager::process(Task& task)
     {
         std::string uname, pwd;
         iss >> uname >> pwd;
-        DBTask task;
-        task.func = [uname, pwd](mysqlx::Session& s) {
-            try {
-                mysqlx::Schema db = s.getSchema("mydb");
-                mysqlx::Table users = db.getTable("users");
+        auto getData = LoginCache::GetInstance().Get(uname);
 
-                auto res = users.select("username", "password")
-                    .where("username = :uname AND password = :pwd")
-                    .bind("uname", uname)
-                    .bind("pwd", pwd)
-                    .execute();
+        if (getData == std::nullopt)
+        {
+            DBTask task;
+            task.func = [uname, pwd](mysqlx::Session& s) {
+                try {
+                    mysqlx::Schema db = s.getSchema("mydb");
+                    mysqlx::Table users = db.getTable("users");
 
-                if (res.count() <= 0) {
-                    std::cout << "[LOGIN 실패] 유저 정보 없음\n";
-                }
-                else {
-                    for (auto row : res) {
-                        std::string name = row[0].get<std::string>();
-                        std::string pw = row[1].get<std::string>();
-                        std::cout << "[LOGIN 성공] ID: " << name << ", PWD: " << pw << "\n";
+                    auto res = users.select("username", "password")
+                        .where("username = :uname AND password = :pwd")
+                        .bind("uname", uname)
+                        .bind("pwd", pwd)
+                        .execute();
+
+                    if (res.count() <= 0) {
+                        std::cout << "[LOGIN 실패] 유저 정보 없음\n";
+                    }
+                    else {
+                        for (auto row : res) {
+                            std::string name = row[0].get<std::string>();
+                            std::string pw = row[1].get<std::string>();
+                            std::cout << "[LOGIN 성공] ID: " << name << ", PWD: " << pw << "\n";
+                            LoginCache::GetInstance().Set(uname, pw);
+                            return;
+                        }
                     }
                 }
-            }
-            catch (const mysqlx::Error& e) {
-                std::cerr << "[LOGIN 쿼리 예외] MySQL 오류: " << e.what() << "\n";
-            }
-            catch (const std::exception& e) {
-                std::cerr << "[LOGIN 예외] std::예외: " << e.what() << "\n";
-            }
-            catch (...) {
-                std::cerr << "[LOGIN 예외] 알 수 없는 예외 발생\n";
-            }
-        };
+                catch (const mysqlx::Error& e) {
+                    std::cerr << "[LOGIN 쿼리 예외] MySQL 오류: " << e.what() << "\n";
+                }
+                catch (const std::exception& e) {
+                    std::cerr << "[LOGIN 예외] std::예외: " << e.what() << "\n";
+                }
 
-        DBManager::GetInstance().PushTask(task);
+            };
+
+            DBManager::GetInstance().PushTask(task);    
+        }
+        else {
+            if (getData.has_value() && pwd == getData.value()) {
+                std::cout << "로그인 성공" << std::endl;
+            }
+            else {
+                std::cout << "[LOGIN 실패] 유저 정보 없음\n";
+            }
+        }
+
+
     }
     else if (ID == "CHAT")
     {

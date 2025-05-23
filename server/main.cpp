@@ -3,6 +3,7 @@
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
 #include "DBManager.hpp"
+#include "LoginCache.hpp"
 #include "utils.hpp"
 ///////////////////////////////
 // 스레드 풀 스레드 개수 설정
@@ -22,6 +23,7 @@ int main() {
 	SessionManager& SM = SessionManager::GetInstance();
 	QueueManager& QM = QueueManager::GetInstance();
 	DBManager& DM = DBManager::GetInstance();
+	LoginCache::GetInstance().StartCleanupThread();
 	///////////////////////////////
 
 

@@ -57,7 +57,7 @@
     - [ ] 250518 터미널 한글 깨짐 현상으로인해 디버깅 불편
     - [X] 250518 / pch.h 미리컴파일된 헤더 사용 & hpp 파일 사용시 헤더충돌 문제 
         - (250519 hpp/cpp 분할구현 및 헤더정리완료)
-    - [X] 250518 / Session::push_WriteQueue 메서드 Lock 중첩 -> 데드락 발생 
+    - [X] 250518 / Session::push_WriteQueue 메서드 Lock 중첩 -> 데드락 발생(Hold and Wait)
         - (250519 post 활용 해결)
 ---
 ### 범용 템플릿화 시작

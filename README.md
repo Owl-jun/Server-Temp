@@ -97,7 +97,7 @@
 <img src="./img/NEW0002.png">
 
 - DB 송수신 담당 클래스 설계
-    - 환경설정 : vcpkg install mysql-connector-cpp(vcpkg) , 헤더 : mysqlx/xdevapi.h 
+    - [mysql-connector-cpp XDEV 환경설정](https://velog.io/@owljun/%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95-docker-c-mysql-X-dev-%EC%82%AC%EC%9A%A9%EC%9D%84-%EC%9C%84%ED%95%9C-%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95)
     - DBManager
         - 범용성을 확보하기위해 최대한 쿼리 송 수신만 담당하게 하고싶었다.
         - 여러가지 설계를 구상하던 도중 성능과 확장성을 잡기위해 세션풀 + 스레드풀 조합으로 결정

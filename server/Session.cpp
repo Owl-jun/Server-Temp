@@ -18,7 +18,7 @@ Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 
 void Session::start()
 {
-	SessionManager::GetInstance().AddSession(shared_from_this());
+	SessionManager::GetInstance().AddSession(id, shared_from_this());
 	do_read();
 }
 

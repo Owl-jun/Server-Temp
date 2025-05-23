@@ -22,7 +22,14 @@ int main() {
 	// 싱글톤 객체 명시적 생성
 	SessionManager& SM = SessionManager::GetInstance();
 	QueueManager& QM = QueueManager::GetInstance();
-	DBManager& DM = DBManager::GetInstance();
+	try
+	{
+		DBManager& DM = DBManager::GetInstance();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 	LoginCache::GetInstance().StartCleanupThread();
 	///////////////////////////////
 

@@ -3,7 +3,7 @@ class Session;
 
 class SessionManager {
 private:
-	std::vector<std::weak_ptr<Session>> Sessions;
+	std::unordered_map<int, std::weak_ptr<Session>> Sessions;
 	std::vector<std::string> validPacketIDs;
 
 	SessionManager();
@@ -21,13 +21,13 @@ public:
 		return g_id++;
 	}
 
-	void AddSession(const std::shared_ptr<Session>& s);
+	void AddSession(const int id, const std::shared_ptr<Session>& s);
 	void DelSession(int id);
 	void BroadCast(std::shared_ptr<std::string> msg);
 
 	//////////////////////////////////////////////////////
 	// get, set
 	std::vector<std::string>& getValidIds();
-	std::vector<std::weak_ptr<Session>>& get_Sessions();
+	std::unordered_map<int , std::weak_ptr<Session>>& get_Sessions();
 	int UserCount();
 };

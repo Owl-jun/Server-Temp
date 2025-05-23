@@ -125,24 +125,8 @@
 
 #### 2회차 , MySQL X Dev 환경 설정 및 DB 연결
 - DBMS : MySQL / xDevAPI
-- docker.desktop [mysql 서버 구동]
-```
-컨테이너 생성시 옵션설정
-docker run -d \
-  --name my-mysql \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -p 3306:3306 -p 33060:33060 \
-  mysql:8.0 \
-  --mysqlx=ON \
-  --mysqlx_port=33060 \
-  --mysqlx_bind_address=0.0.0.0
+- docker.desktop [mysql 서버 구동] , 자세한 환경설정은 1회차 링크 참조
 
-터미널 환경에서 DBMS 사용
-mysqlsh 설치
-
-mysqlsh --uri root@127.0.0.1:33060
-\sql  : SQL 모드로 전환
-```
 - 테스트용 DB 생성
     
     <img src="./img/DB0001.png" width = 600>

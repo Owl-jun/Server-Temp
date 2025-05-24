@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
+#include "RedisManager.hpp"
 #include "LoginCache.hpp"
 #include "DBManager.hpp"
 #include "Session.hpp"
@@ -58,13 +59,16 @@ void QueueManager::process(Task& task)
     {
         std::string uname, pwd;
         iss >> uname >> pwd;
-        auto getData = LoginCache::GetInstance().Get(uname);
-
-        if (getData == std::nullopt)
+        //auto getData = LoginCache::GetInstance().Get(uname);
+        
+        if (!RedisManager::GetInstance().Get("login:" + uname))
         {
+            // 응답 시간 TEST ms
             DBTask task;
             task.func = [uname, pwd](mysqlx::Session& s) {
                 try {
+                    auto start = std::chrono::high_resolution_clock::now();
+
                     mysqlx::Schema db = s.getSchema("mydb");
                     mysqlx::Table users = db.getTable("users");
 
@@ -82,10 +86,13 @@ void QueueManager::process(Task& task)
                             std::string name = row[0].get<std::string>();
                             std::string pw = row[1].get<std::string>();
                             std::cout << "[LOGIN 성공] ID: " << name << ", PWD: " << pw << "\n";
-                            LoginCache::GetInstance().Set(uname, pw);
-                            return;
+                            RedisManager::GetInstance().Set("login:" + name, pw, 60);
+                            // LoginCache::GetInstance().Set(uname, pw);
                         }
                     }
+                    auto end = std::chrono::steady_clock::now();
+                    auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+                    std::cout << "DBTask Execute Time : " << elapsed << std::endl;
                 }
                 catch (const mysqlx::Error& e) {
                     std::cerr << "[LOGIN 쿼리 예외] MySQL 오류: " << e.what() << "\n";
@@ -99,13 +106,19 @@ void QueueManager::process(Task& task)
             DBManager::GetInstance().PushTask(task);    
         }
         else {
-            if (getData.has_value() && pwd == getData.value()) {
+            auto start = std::chrono::high_resolution_clock::now();
+
+            if (RedisManager::GetInstance().Get("login:" + uname).has_value() && pwd == RedisManager::GetInstance().Get("login:" + uname).value()) {
                 std::cout << "로그인 성공" << std::endl;
             }
             else {
                 std::cout << "[LOGIN 실패] 유저 정보 없음\n";
             }
+            auto end = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            std::cout << "DBTask Execute Time : " << elapsed << std::endl;
         }
+
 
 
     }
@@ -116,5 +129,5 @@ void QueueManager::process(Task& task)
     {
     }
 
-    std::cout << "[QueueManager::process] Task 작업 완료 -> " << msg << std::endl;
+    //std::cout << "[QueueManager::process] Task 작업 완료 -> " << msg << std::endl;
 }

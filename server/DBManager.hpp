@@ -58,6 +58,7 @@ class DBManager {
 			// 응답 시간 TEST ms
 			auto end = std::chrono::steady_clock::now();
 			auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+			std::cout << "Query Response Time : " << elapsed << std::endl;
 			spdlog::info("[DBThread {}] query response time: {}us", idx, elapsed);
 		}
 	}

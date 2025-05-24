@@ -3,6 +3,7 @@
 #include "QueueManager.hpp"
 #include "SessionManager.hpp"
 #include "DBManager.hpp"
+#include "RedisManager.hpp"
 #include "LoginCache.hpp"
 #include "utils.hpp"
 ///////////////////////////////
@@ -30,7 +31,8 @@ int main() {
 	{
 		std::cerr << e.what() << std::endl;
 	}
-	LoginCache::GetInstance().StartCleanupThread();
+	RedisManager::GetInstance().Connect("210.119.12.82",6379);
+	// LoginCache::GetInstance().StartCleanupThread();
 	///////////////////////////////
 
 

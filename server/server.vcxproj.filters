@@ -23,6 +23,9 @@
     <ClCompile Include="LoginCache.cpp">
       <Filter>CacheSystem</Filter>
     </ClCompile>
+    <ClCompile Include="RedisManager.cpp">
+      <Filter>CacheSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pch">
@@ -88,6 +91,9 @@
       <Filter>CacheSystem</Filter>
     </ClInclude>
     <ClInclude Include="ICache.hpp">
+      <Filter>CacheSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="RedisManager.hpp">
       <Filter>CacheSystem</Filter>
     </ClInclude>
   </ItemGroup>

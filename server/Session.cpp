@@ -12,13 +12,13 @@ Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 	, player()
 	, id(SessionManager::make_UniqueId())
 {
-	std::cout << "Created Session ID , Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
 	// spdlog::info("[Session] Created Session ID : {}, UserCount : {}", id, std::to_string(SessionManager::GetInstance().UserCount()));
 }
 
 void Session::start()
 {
 	SessionManager::GetInstance().AddSession(id, shared_from_this());
+	std::cout << "Created Session ID , Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
 	do_read();
 }
 
@@ -114,7 +114,7 @@ void Session::Close()
 {
 	SessionManager::GetInstance().DelSession(id);
 	std::cout << "[Session::Close] Session Close, Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
-	spdlog::info(to_utf8(std::format("[Session::Close] SESSION ID : {} , CurUserCount : {}", std::to_string(id), std::to_string(SessionManager::GetInstance().UserCount()))));
+	// spdlog::info(to_utf8(std::format("[Session::Close] SESSION ID : {} , CurUserCount : {}", std::to_string(id), std::to_string(SessionManager::GetInstance().UserCount()))));
 	std::error_code ec;
 	ssl_stream->lowest_layer().cancel();
 	ssl_stream->shutdown(ec);

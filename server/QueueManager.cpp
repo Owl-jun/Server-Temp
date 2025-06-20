@@ -11,7 +11,7 @@ void QueueManager::push(const Task& task)
     {
         std::lock_guard<std::mutex> lock(TaskMutex);
         TaskQueue.push(task);
-        spdlog::info("[QueueManager::push] task.message -> " + task.message);
+        // spdlog::info("[QueueManager::push] task.message -> " + task.message);
     }
     TaskCV.notify_one();
 }

@@ -11,9 +11,7 @@ public:
 	std::string message;
 };
 
-/// <summary>
-/// 
-/// </summary>
+
 class DBTask {
 public:
 	//int sessionIndex;

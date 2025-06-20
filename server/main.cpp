@@ -31,7 +31,9 @@ int main() {
 	{
 		std::cerr << e.what() << std::endl;
 	}
-	RedisManager::GetInstance().Connect("210.119.12.82",6379);
+	json ctx;
+	get_json(ctx);
+	RedisManager::GetInstance().Connect(ctx["REDIS"]["IP"], 6379);
 	// LoginCache::GetInstance().StartCleanupThread();
 	///////////////////////////////
 

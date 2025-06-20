@@ -33,3 +33,4 @@
 
 // 네임스페이스
 using asio::ip::tcp;
+using json = nlohmann::json;

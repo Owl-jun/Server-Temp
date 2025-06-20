@@ -60,11 +60,11 @@ inline std::string to_utf8(const std::string& cp949_str) {
 // json
 
 
-using json = nlohmann::json;
+//using json = nlohmann::json;
 
 inline bool set_dbInfo(std::string& ip, int& port, std::string& userId, std::string& pwd) 
 {
-    std::ifstream configFile("secure/dbcon.json");
+    std::ifstream configFile("secure/config.json");
     if (!configFile.is_open()) {
         std::cerr << "config.json 파일을 열 수 없습니다." << std::endl;
         return false;
@@ -79,6 +79,27 @@ inline bool set_dbInfo(std::string& ip, int& port, std::string& userId, std::str
         port = config["DBINFO"]["PORT"];
         userId = config["DBINFO"]["DBID"];
         pwd = config["DBINFO"]["PWD"];
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << "json 작업 실패 : " << e.what() << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+inline bool get_json(json& ctx)
+{
+    std::ifstream configFile("secure/config.json");
+    if (!configFile.is_open()) {
+        std::cerr << "config.json 파일을 열 수 없습니다." << std::endl;
+        return false;
+    }
+    try
+    {
+        ctx;
+        configFile >> ctx;
     }
     catch (const std::exception& e)
     {

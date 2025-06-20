@@ -14,7 +14,12 @@ RedisManager& RedisManager::GetInstance() {
 
 bool RedisManager::Connect(const std::string& host, int port) {
     redisContext* raw = redisConnect(host.c_str(), port);
-    if (!raw || raw->err) return false;
+    if (!raw || raw->err)
+    {
+        std::cout << "REDIS Connect FAILED !" << std::endl;
+        return false;
+    }
+    std::cout << "REDIS Connected !" << std::endl;
 
     context = std::shared_ptr<redisContext>(raw, [](redisContext* ctx) {
         if (ctx) redisFree(ctx);

@@ -69,11 +69,11 @@ class DBManager {
 			running = false;
 		}
 
-		cv.notify_all();  // ✅ 모든 대기 중인 스레드 깨움
+		cv.notify_all();  
 
 		for (auto& worker : workers) {
 			if (worker.joinable())
-				worker.join();  // ✅ 안전하게 종료 대기
+				worker.join();  
 		}
 	}
 
@@ -104,7 +104,7 @@ private:
 			workers.emplace_back(std::thread([this,j]() { run(j); }));
 		}
 		
-		std::cout << "DB Connection Suc !!" << std::endl;
+		std::cout << "DB Connected !" << std::endl;
 	}
 };
 

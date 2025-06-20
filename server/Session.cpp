@@ -13,7 +13,7 @@ Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 	, id(SessionManager::make_UniqueId())
 {
 	std::cout << "Created Session ID , Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
-	spdlog::info("[Session] Created Session ID : {}, UserCount : {}", id, std::to_string(SessionManager::GetInstance().UserCount()));
+	// spdlog::info("[Session] Created Session ID : {}, UserCount : {}", id, std::to_string(SessionManager::GetInstance().UserCount()));
 }
 
 void Session::start()

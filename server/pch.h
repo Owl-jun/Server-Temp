@@ -34,3 +34,5 @@
 // 네임스페이스
 using asio::ip::tcp;
 using json = nlohmann::json;
+
+const int MAX_PACKET_SIZE = 2048;

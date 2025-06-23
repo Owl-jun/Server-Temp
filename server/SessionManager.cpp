@@ -2,13 +2,7 @@
 #include "SessionManager.hpp"
 #include "Session.hpp"
 
-//////////////////////////////////////////////////////
-// 패킷 유효성 검사
-// 패킷 디자인시, 아래 { } 내 패킷 ID 입력
-SessionManager::SessionManager() {
-	validPacketIDs = { "TEST" , "CHAT" , "MOVE" , "LOGIN" };
-}
-//////////////////////////////////////////////////////
+SessionManager::SessionManager() {}
 
 void SessionManager::AddSession(const int id, const std::shared_ptr<Session>& s) {
 	Sessions[id] = s;

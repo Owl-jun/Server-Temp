@@ -11,6 +11,7 @@ void QueueManager::push(const Task& task)
     {
         std::lock_guard<std::mutex> lock(TaskMutex);
         TaskQueue.push(task);
+        std::cout << "Recv : " << task.message << std::endl;
         // spdlog::info("[QueueManager::push] task.message -> " + task.message);
     }
     TaskCV.notify_one();
@@ -39,27 +40,26 @@ void QueueManager::process(Task& task)
 {
     auto& session = task.session;
     std::string msg = task.message;
-    std::istringstream iss(msg);
+    const uint8_t* data = reinterpret_cast<const uint8_t*>(msg.data());
     
-    // ID Parsing
-    std::string ID;
-    iss >> ID;
+    // opcode Parsing
+    uint8_t opcode = data[0];
 
 
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////
     // TO DO PROCESS
-    if (ID == "TEST")
+    switch (opcode)
     {
-        session->push_WriteQueue(std::make_shared<std::string>("one-to-one test\n"));
-        SessionManager::GetInstance().BroadCast(std::make_shared<std::string>("BroadCasting test\n"));
-    }
-    else if (ID == "CHAT")
-    {
-    }
-    else if (ID == "MOVE")
-    {
+    case 0x01: // LOGIN
+        session->push_WriteQueue(std::make_shared<std::string>("1OK"));
+        break;
+    case 0x02: // MOVE
+    case 0x03: // ATTACK
+    default:
+        std::cout << "Unknown opcode: " << opcode << std::endl;
+        return;
     }
 
     //std::cout << "[QueueManager::process] Task 작업 완료 -> " << msg << std::endl;

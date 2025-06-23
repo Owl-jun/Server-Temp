@@ -161,19 +161,16 @@ bool Session::isValid(const std::string& packet)
 	if (packet.empty()) return false;
 	const uint8_t* data = reinterpret_cast<const uint8_t*>(packet.data());
 	uint8_t opcode = data[0];
+	if (opcode != 0x01) { if (!isAuth) return false; }
 
 	switch (opcode)
 	{
 	case 0x01: // LOGIN
 		return validateLogin(data + 1, packet.size() - 1);
 	case 0x02: // MOVE
-		if (isAuth)
-			return validateMove(data + 1, packet.size() - 1);
-		else return false;
+		return validateMove(data + 1, packet.size() - 1);
 	case 0x03: // ATTACK
-		if (isAuth)
-			return validateAttack(data + 1, packet.size() - 1);
-		else return false;
+		return validateAttack(data + 1, packet.size() - 1);
 	default:
 		std::cout << "Unknown opcode: " << opcode << std::endl;
 		return false;

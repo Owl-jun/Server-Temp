@@ -98,21 +98,21 @@ void Session::do_read()
 //		});
 //}
 
-void Session::push_WriteQueue(std::shared_ptr<std::string> msg)
+void Session::push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg)
 {
 	std::lock_guard<std::mutex> lock(writeMutex);
+	
 	writeQueue.push(msg);
-
 	// [250518] issue : Lock 중첩 데드락 발생 , post 로 수정
 	// self->do_write();
-	asio::post(ssl_stream->get_executor(), [self = shared_from_this()]() {
-		self->do_write();
+	asio::post(ssl_stream->get_executor(), [self = shared_from_this(), opcode]() {
+		self->do_write(opcode);
 	});
 	
 }
 
 // TLP 리팩토링
-void Session::do_write()
+void Session::do_write(uint8_t opcode)
 {
 	std::lock_guard<std::mutex> lock(writeMutex);
 
@@ -123,13 +123,15 @@ void Session::do_write()
 	auto payload = writeQueue.front();
 	auto self = shared_from_this();
 
-	uint32_t len = htonl(payload->size());
-	std::vector<uint8_t> sendBuffer(sizeof(len) + payload->size());
+
+	uint32_t len = htonl(payload->size()+1);
+	std::vector<uint8_t> sendBuffer(sizeof(len) + payload->size()+1);
 	memcpy(sendBuffer.data(), &len, sizeof(len));
-	memcpy(sendBuffer.data() + sizeof(len), payload->data(), payload->size());
+	memcpy(sendBuffer.data() + sizeof(len), &opcode, 1);
+	memcpy(sendBuffer.data() + sizeof(len) + 1 , payload->data(), payload->size());
 
 	asio::async_write(*ssl_stream, asio::buffer(sendBuffer),
-		[self](std::error_code ec, std::size_t)
+		[self, opcode](std::error_code ec, std::size_t)
 		{
 			std::lock_guard<std::mutex> lock(self->writeMutex);
 			if (!ec)
@@ -141,8 +143,8 @@ void Session::do_write()
 				{
 					// [250518] issue : Lock 중첩 데드락 발생 , post 로 수정
 					// self->do_write();
-					asio::post(self->ssl_stream->get_executor(), [self]() {
-						self->do_write();
+					asio::post(self->ssl_stream->get_executor(), [self, opcode]() {
+						self->do_write(opcode);
 					});
 				}
 			}

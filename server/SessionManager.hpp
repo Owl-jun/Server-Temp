@@ -23,7 +23,7 @@ public:
 
 	void AddSession(const int id, const std::shared_ptr<Session>& s);
 	void DelSession(int id);
-	void BroadCast(std::shared_ptr<std::string> msg);
+	void BroadCast(uint8_t opcode,std::shared_ptr<std::string> msg);
 
 	//////////////////////////////////////////////////////
 	// get, set

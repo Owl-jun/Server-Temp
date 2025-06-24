@@ -45,7 +45,7 @@ void QueueManager::process(Task& task)
     // opcode Parsing
     uint8_t opcode = data[0];
 
-
+    std::string payload(msg.begin() + 1, msg.end());
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -53,9 +53,12 @@ void QueueManager::process(Task& task)
     switch (opcode)
     {
     case 0x01: // LOGIN
-        session->push_WriteQueue(std::make_shared<std::string>("1OK"));
+        session->push_WriteQueue(0x01,std::make_shared<std::string>("OK"));
         break;
     case 0x02: // MOVE
+        std::cout << payload << std::endl;
+        SessionManager::GetInstance().BroadCast(0x02,std::make_shared<std::string>(payload));
+        break;
     case 0x03: // ATTACK
     default:
         std::cout << "Unknown opcode: " << opcode << std::endl;

@@ -12,10 +12,10 @@ void SessionManager::DelSession(int id) {
 	Sessions.erase(id);
 }
 
-void SessionManager::BroadCast(std::shared_ptr<std::string> msg) {
+void SessionManager::BroadCast(uint8_t opcode, std::shared_ptr<std::string> msg) {
 	for (auto it = Sessions.begin(); it != Sessions.end(); ) {
 		if (auto session = it->second.lock()) {
-			session->push_WriteQueue(msg);
+			session->push_WriteQueue(opcode, msg);
 			++it;
 		}
 		else {

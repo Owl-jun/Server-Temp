@@ -38,7 +38,7 @@ public:
 	/////////////////////////////
 
 	void start();
-	void push_WriteQueue(std::shared_ptr<std::string> msg);
+	void push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg);
 	void Close();
 
 
@@ -51,7 +51,7 @@ public:
 
 private:
 	void do_read();
-	void do_write();
+	void do_write(uint8_t opcode);
 	bool isValid(const std::string& packet);
 
 	bool validateLogin(const uint8_t* data, size_t size);

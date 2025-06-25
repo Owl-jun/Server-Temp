@@ -96,5 +96,8 @@
     <ClInclude Include="RedisManager.hpp">
       <Filter>CacheSystem</Filter>
     </ClInclude>
+    <ClInclude Include="common.hpp">
+      <Filter>Customs</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -150,6 +150,7 @@
     <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.hpp" />
     <ClInclude Include="ICache.hpp" />
     <ClInclude Include="LoginCache.hpp" />
     <ClInclude Include="DBManager.hpp" />

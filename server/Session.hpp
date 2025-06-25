@@ -4,12 +4,6 @@
 #include "utils.hpp"
 using asio::ip::tcp;
 
-enum class ReadState
-{
-	ReadingHeader,
-	ReadingBody
-};
-
 class Session : public std::enable_shared_from_this<Session> {
 private:
 	int id;

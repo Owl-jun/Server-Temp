@@ -1,5 +1,8 @@
 #pragma once
 
+// Common
+#include "common.hpp"
+
 // ±âº» STL
 #include <iostream>
 #include <string>
@@ -16,7 +19,6 @@
 #include <atomic>
 #include <chrono>
 #include <ctime>
-
 
 // json
 #include <nlohmann/json.hpp>
@@ -35,4 +37,5 @@
 using asio::ip::tcp;
 using json = nlohmann::json;
 
-const int MAX_PACKET_SIZE = 2048;
+
+

@@ -40,3 +40,9 @@ struct Pos {
 		return str;
 	}
 };
+
+struct PlayerInfo {
+	std::string id;
+	std::string name;
+	Pos pos;
+};

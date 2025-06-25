@@ -55,7 +55,6 @@ int main() {
 	spdlog::info(to_utf8("일꾼 스레드 실행완료"));
 
 
-	// 일하러 나가신 부모님이 와야 잠들 수 있는 main 녀석 ..
 	for (auto& NetThread : NetThreads) { NetThread.join(); }
 	for (auto& workerthread : WorkerThreads) { workerthread.join(); }
 

@@ -19,7 +19,7 @@ Session::Session(std::shared_ptr<asio::ssl::stream<tcp::socket>> stream)
 void Session::start()
 {
 	SessionManager::GetInstance().AddSession(id, shared_from_this());
-	std::cout << "Created Session ID , Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
+	std::cout << "Created Session ID" << id << ", Current UserCount : " << std::to_string(SessionManager::GetInstance().UserCount()) << std::endl;
 	do_read();
 }
 
@@ -163,7 +163,7 @@ bool Session::isValid(const std::string& packet)
 	if (packet.empty()) return false;
 	const uint8_t* data = reinterpret_cast<const uint8_t*>(packet.data());
 	uint8_t opcode = data[0];
-	if (opcode != 0x01) { if (!isAuth) return false; }
+	if (opcode != static_cast<int>(Opcode::LOGIN)) { if (!isAuth) return false; }
 
 	switch (opcode)
 	{
@@ -199,7 +199,6 @@ bool Session::validateLogin(const uint8_t* data, size_t size)
 	if (size < 1 + tokenLen) return false;
 
 	std::string msg(reinterpret_cast<const char*>(data), size);
-
 	std::istringstream iss(msg);
 	std::string userid, token;
 
@@ -240,6 +239,13 @@ bool Session::validateLogin(const uint8_t* data, size_t size)
 }
 bool Session::validateMove(const uint8_t* data, size_t size)
 {
+	if (size < 2) return false;
+	uint8_t tokenLen = data[0];
+	if (size < 1 + tokenLen) return false;
+
+	std::string msg(reinterpret_cast<const char*>(data), size);
+	std::istringstream iss(msg);
+
 	return true;
 }
 bool Session::validateAttack(const uint8_t* data, size_t size)

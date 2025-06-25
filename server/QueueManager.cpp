@@ -42,28 +42,39 @@ void QueueManager::process(Task& task)
     std::string msg = task.message;
     const uint8_t* data = reinterpret_cast<const uint8_t*>(msg.data());
     
-    // opcode Parsing
+    // opcode & payload Parsing
     uint8_t opcode = data[0];
-
     std::string payload(msg.begin() + 1, msg.end());
-    //////////////////////////////////////////
+    
     //////////////////////////////////////////
     //////////////////////////////////////////
     // TO DO PROCESS
     switch (opcode)
     {
-    case 0x01: // LOGIN
-        session->push_WriteQueue(0x01,std::make_shared<std::string>("OK"));
+    case static_cast<int>(Opcode::LOGIN):
+        session->push_WriteQueue(
+            static_cast<int>(Opcode::LOGIN),
+            std::make_shared<std::string>("OK")
+        );
         break;
-    case 0x02: // MOVE
+
+    case static_cast<int>(Opcode::MOVE):
         std::cout << payload << std::endl;
-        SessionManager::GetInstance().BroadCast(0x02,std::make_shared<std::string>(payload));
+        SessionManager::GetInstance().BroadCast(
+            static_cast<int>(Opcode::MOVE),
+            std::make_shared<std::string>(payload)
+        );
         break;
-    case 0x03: // ATTACK
+
+    case static_cast<int>(Opcode::ATTACK):
+
+        break;
     default:
         std::cout << "Unknown opcode: " << opcode << std::endl;
         return;
     }
+    //////////////////////////////////////////
+    //////////////////////////////////////////
 
     //std::cout << "[QueueManager::process] Task 작업 완료 -> " << msg << std::endl;
 }

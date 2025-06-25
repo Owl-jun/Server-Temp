@@ -51,7 +51,6 @@ class DBManager {
 			// 응답 시간 TEST ms
 			auto start = std::chrono::high_resolution_clock::now();
 
-			// 세션 풀 중 유휴 세션을 찾는 로직 구현해야함
 			task.func(session);
 
 

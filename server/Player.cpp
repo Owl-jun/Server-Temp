@@ -24,3 +24,9 @@ PlayerInfo Player::get_player_data()
 	PlayerInfo pi = { id,name,pos };
 	return pi;
 }
+
+void Player::set_pos(double x, double y)
+{
+	pos.x = x;
+	pos.y = y;
+}

@@ -23,6 +23,11 @@ void Session::start()
 	do_read();
 }
 
+void Session::set_player_position(double x, double y)
+{
+	player.set_pos(x, y);
+}
+
 void Session::do_read()
 {
 	auto self(shared_from_this());
@@ -38,7 +43,7 @@ void Session::do_read()
 					self->expected_length = ntohl(self->expected_length); 
 					if (self->expected_length > MAX_PACKET_SIZE)
 					{
-						spdlog::warn("비정상적으로 큰 패킷 크기 탐지 → 연결 종료");
+						std::cout << "Exception : too bigger size packet" << std::endl;
 						self->Close();
 						return;
 					}
@@ -239,12 +244,12 @@ bool Session::validateLogin(const uint8_t* data, size_t size)
 }
 bool Session::validateMove(const uint8_t* data, size_t size)
 {
-	if (size < 2) return false;
-	uint8_t tokenLen = data[0];
-	if (size < 1 + tokenLen) return false;
+	//if (size < 2) return false;
+	//uint8_t tokenLen = data[0];
+	//if (size < 1 + tokenLen) return false;
 
-	std::string msg(reinterpret_cast<const char*>(data), size);
-	std::istringstream iss(msg);
+	//std::string msg(reinterpret_cast<const char*>(data), size);
+	//std::istringstream iss(msg);
 
 	return true;
 }

@@ -41,6 +41,7 @@ public:
 	std::shared_ptr<asio::ssl::stream<tcp::socket>> get_stream() const { return ssl_stream; }
 	Player& get_player() { return player; }
 	int get_id() const { return id; }
+	void set_player_position(double x, double y);
 	/////////////////////////////
 
 private:

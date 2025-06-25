@@ -11,7 +11,7 @@ void QueueManager::push(const Task& task)
     {
         std::lock_guard<std::mutex> lock(TaskMutex);
         TaskQueue.push(task);
-        std::cout << "Recv : " << task.message << std::endl;
+        //std::cout << "Recv : " << task.message << std::endl;
         // spdlog::info("[QueueManager::push] task.message -> " + task.message);
     }
     TaskCV.notify_one();
@@ -49,32 +49,43 @@ void QueueManager::process(Task& task)
     //////////////////////////////////////////
     //////////////////////////////////////////
     // TO DO PROCESS
-    switch (opcode)
+    if (opcode == static_cast<int>(Opcode::LOGIN))
     {
-    case static_cast<int>(Opcode::LOGIN):
-        session->push_WriteQueue(
+        std::istringstream iss(payload);
+        std::string uid;
+        iss >> uid;
+        SessionManager::GetInstance().BroadCast(
             static_cast<int>(Opcode::LOGIN),
-            std::make_shared<std::string>("OK")
+            std::make_shared<std::string>(uid)
         );
-        break;
+    }
+    else if (static_cast<int>(Opcode::MOVE))
+    {
+        std::cout << "opcode : " << std::to_string(opcode) << " payload : " << payload << std::endl;
 
-    case static_cast<int>(Opcode::MOVE):
-        std::cout << payload << std::endl;
+        std::istringstream iss(payload);
+        std::string uid, sx, sy, sz;
+        iss >> uid;
+        std::getline(iss, sx, ',');
+        std::getline(iss, sy, ',');  // dummy
+        std::getline(iss, sz, ',');
+
+        float x = std::stod(sx);
+        float y = std::stod(sz);
+        session->set_player_position(x,y);
+        std::cout << "set Pos -> " << session->get_player().get_player_data().pos.GetString() << std::endl;
+
         SessionManager::GetInstance().BroadCast(
             static_cast<int>(Opcode::MOVE),
             std::make_shared<std::string>(payload)
         );
-        break;
-
-    case static_cast<int>(Opcode::ATTACK):
-
-        break;
-    default:
+    }
+    else if (static_cast<int>(Opcode::ATTACK))
+    {
+    }
+    else 
+    {
         std::cout << "Unknown opcode: " << opcode << std::endl;
         return;
     }
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-
-    //std::cout << "[QueueManager::process] Task 작업 완료 -> " << msg << std::endl;
 }

@@ -15,5 +15,6 @@ public:
 	Player();
 	void set_from_db(const mysqlx::Row& row);
 	PlayerInfo get_player_data();
+	void set_pos(double x, double y);
 };
 

@@ -120,7 +120,7 @@ void Session::push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg)
 void Session::excute_event(mysqlx::Row r)
 {
 	//std::cout << "LOGIN CALLBACK EXECUTE " << std::endl;
-	if (player.get_player_data().name == "")
+	if (player.get_name() == "")
 	{
 		player.set_from_db(r);
 		//std::cout << "Player Data Set -> " << player.get_player_data().name << std::endl;

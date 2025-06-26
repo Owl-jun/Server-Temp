@@ -11,7 +11,7 @@ private:
 public:
 	Player();
 	void set_from_db(mysqlx::Row row);
-	PlayerInfo get_player_data();
 	void set_pos(double x, double y);
+	std::string get_name() { return name; }
 };
 

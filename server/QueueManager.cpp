@@ -80,10 +80,24 @@ void QueueManager::process(Task& task)
                     }
                 }
             );
+
             SessionManager::GetInstance().BroadCast(
                 static_cast<int>(Opcode::LOGIN),
                 std::make_shared<std::string>(name)
             );
+
+            auto sessions = SessionManager::GetInstance().get_Sessions();
+            for (auto [i, ses] : sessions)
+            {
+                Player& p = ses.lock()->get_player();
+                std::shared_ptr<std::string> un = std::make_shared<std::string>(p.get_name());
+                if (*un != "")
+                {
+                    session->push_WriteQueue(
+                        static_cast<int>(Opcode::LOGIN), un
+                    );
+                }
+            }
         }
         else { return; }
     }
@@ -101,7 +115,7 @@ void QueueManager::process(Task& task)
         float x = std::stod(sx);
         float y = std::stod(sz);
         session->set_player_position(x,y);
-        std::cout << "set Pos -> " << session->get_player().get_player_data().pos.GetString() << std::endl;
+        std::cout << "set Pos -> " << session->get_player().get_name() << std::endl;
 
         SessionManager::GetInstance().BroadCast(
             static_cast<int>(Opcode::MOVE),

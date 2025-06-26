@@ -19,11 +19,6 @@ void Player::set_from_db(mysqlx::Row row)
 	 pos.y = posy;
 }
 
-PlayerInfo Player::get_player_data()
-{
-	PlayerInfo pi = { id,name,pos };
-	return pi;
-}
 
 void Player::set_pos(double x, double y)
 {

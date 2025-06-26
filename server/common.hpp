@@ -3,12 +3,14 @@
 const int MAX_PACKET_SIZE = 2048;
 
 //			FSM			//
+
 //		OPER CODE		//
 enum class Opcode
 {
 	LOGIN = 0x01,
 	MOVE = 0x02,
-	ATTACK = 0x03
+	ATTACK = 0x03,
+	LOGOUT = 0x04
 };
 
 //		RECV STATE		//
@@ -18,4 +20,10 @@ enum class ReadState
 	ReadingBody
 };
 
+//		LOGIN STATE		//
+enum class LoginState
+{
+	LOGIN = 0x00,
+	LOGOUT = 0x01
+};
 

@@ -34,6 +34,7 @@ int main() {
 	json ctx;
 	get_json(ctx);
 	RedisManager::GetInstance().Connect(ctx["REDIS"]["IP"], 6379);
+	RedisManager::GetInstance().StartSubscriber("user:state:update");
 	// LoginCache::GetInstance().StartCleanupThread();
 	///////////////////////////////
 

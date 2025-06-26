@@ -33,6 +33,7 @@ public:
 
 	void start();
 	void push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg);
+	void excute_event(mysqlx::Row);
 	void Close();
 
 
@@ -52,4 +53,5 @@ private:
 	bool validateLogin(const uint8_t* data, size_t size);
 	bool validateMove(const uint8_t* data, size_t size);
 	bool validateAttack(const uint8_t* data, size_t size);
+	bool validateLogout(const uint8_t* data, size_t size);
 };

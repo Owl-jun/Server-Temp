@@ -67,6 +67,7 @@ void Session::do_read()
 				{
 					std::string packet(read_buffer.begin(), read_buffer.end());
 					if (self->isValid(packet)) {
+						//std::cout << "async_read packet -> " << packet << std::endl;
 						QueueManager::GetInstance().push({ self, packet });
 					}
 
@@ -116,6 +117,16 @@ void Session::push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg)
 	
 }
 
+void Session::excute_event(mysqlx::Row r)
+{
+	//std::cout << "LOGIN CALLBACK EXECUTE " << std::endl;
+	if (player.get_player_data().name == "")
+	{
+		player.set_from_db(r);
+		//std::cout << "Player Data Set -> " << player.get_player_data().name << std::endl;
+	}
+}
+
 // TLP 리팩토링
 void Session::do_write(uint8_t opcode)
 {
@@ -126,6 +137,9 @@ void Session::do_write(uint8_t opcode)
 
 	sending = true;
 	auto payload = writeQueue.front();
+	std::cout << "[WRITE] opcode : " << static_cast<int>(opcode) << std::endl;
+	std::cout << "[WRITE] payload : " << payload->c_str() << std::endl;
+
 	auto self = shared_from_this();
 
 
@@ -143,7 +157,7 @@ void Session::do_write(uint8_t opcode)
 			{
 				self->writeQueue.pop();
 				self->sending = false;
-
+				std::cout << "[WRITE] Sened" << std::endl;
 				if (!self->writeQueue.empty())
 				{
 					// [250518] issue : Lock 중첩 데드락 발생 , post 로 수정
@@ -178,6 +192,8 @@ bool Session::isValid(const std::string& packet)
 		return validateMove(data + 1, packet.size() - 1);
 	case 0x03: // ATTACK
 		return validateAttack(data + 1, packet.size() - 1);
+	case 0x04: // LOGOUT
+		return validateLogout(data + 1, packet.size() - 1);
 	default:
 		std::cout << "Unknown opcode: " << opcode << std::endl;
 		return false;
@@ -233,7 +249,7 @@ bool Session::validateLogin(const uint8_t* data, size_t size)
 
 	if (token == savedToken)
 	{
-		std::cout << "Login 성공: {}" << userid << std::endl;
+		std::cout << "Login Success: " << userid << std::endl;
 		isAuth = true;
 		return true;
 	}
@@ -254,6 +270,11 @@ bool Session::validateMove(const uint8_t* data, size_t size)
 	return true;
 }
 bool Session::validateAttack(const uint8_t* data, size_t size)
+{
+	return true;
+}
+
+bool Session::validateLogout(const uint8_t* data, size_t size)
 {
 	return true;
 }

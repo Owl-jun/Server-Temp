@@ -41,10 +41,12 @@ void QueueManager::process(Task& task)
     auto& session = task.session;
     std::string msg = task.message;
     const uint8_t* data = reinterpret_cast<const uint8_t*>(msg.data());
-    
+    int opcode = data[0];
     // opcode & payload Parsing
-    uint8_t opcode = data[0];
+    //std::cout << "QueueManager OPCODE : " << opcode << std::endl;
+
     std::string payload(msg.begin() + 1, msg.end());
+    //std::cout << "QueueManager payload : " << payload << std::endl;
     
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -52,12 +54,38 @@ void QueueManager::process(Task& task)
     if (opcode == static_cast<int>(Opcode::LOGIN))
     {
         std::istringstream iss(payload);
-        std::string uid;
-        iss >> uid;
-        SessionManager::GetInstance().BroadCast(
-            static_cast<int>(Opcode::LOGIN),
-            std::make_shared<std::string>(uid)
-        );
+        std::string name;
+        iss >> name;
+        //std::cout << "QueueManager LOGIN name : " << name << std::endl;
+
+        auto flag = RedisManager::GetInstance().Get("user:state:" + name);
+        if (flag != std::nullopt)
+        {
+            //std::cout << "QueueManager Flag != nullopt " << std::endl;
+
+            DBManager::GetInstance().PushTask(
+                DBTask{
+                    .func = [session, name](mysqlx::Session& ses)
+                    {
+                        std::cout << "DBTask payload : " << name << std::endl;
+                        mysqlx::Schema schema = ses.getSchema("gamedb");
+                        mysqlx::Table table = schema.getTable("users");
+                        auto result = table
+                            .select("*")
+                            .where("username = :id")        
+                            .bind("id", name)
+                            .execute();
+                        /// 동기화 체크 필요
+                        session->excute_event(result.fetchOne());
+                    }
+                }
+            );
+            SessionManager::GetInstance().BroadCast(
+                static_cast<int>(Opcode::LOGIN),
+                std::make_shared<std::string>(name)
+            );
+        }
+        else { return; }
     }
     else if (static_cast<int>(Opcode::MOVE))
     {

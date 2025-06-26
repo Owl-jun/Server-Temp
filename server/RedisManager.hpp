@@ -18,6 +18,8 @@ private:
     std::shared_ptr<redisContext> commandContext;   // GET/SET
     std::shared_ptr<redisContext> subscriberContext; // SUBSCRIBE
 
+    void HandleMsg(const std::string& msg);
+
     std::atomic<bool> isRunning = false;
     std::thread subscriberThread;
 

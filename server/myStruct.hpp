@@ -42,7 +42,7 @@ struct Pos {
 };
 
 struct PlayerInfo {
-	std::string id;
+	int id;
 	std::string name;
 	Pos pos;
 };

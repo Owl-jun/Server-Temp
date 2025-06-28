@@ -77,7 +77,7 @@ void LoginCache::Cleanup()
 	for (auto it = valueCache.begin(); it != valueCache.end(); ) 
 	{
 		if (it->second.expire <= std::chrono::steady_clock::now())
-			it = valueCache.erase(it);  // erase는 다음 유효 iter 리턴
+			it = valueCache.erase(it); 
 		else
 			++it;
 	}

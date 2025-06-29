@@ -28,6 +28,24 @@ void Session::set_player_position(double x, double y)
 	player.set_pos(x, y);
 }
 
+void Session::set_player_name(std::string name)
+{
+	player.set_name(name);
+}
+
+std::string Session::get_player_position()
+{
+	std::string msg = player.get_pos();
+	return msg;
+}
+
+std::string Session::get_player_name()
+{
+	std::string msg = player.get_name();
+
+	return msg;
+}
+
 void Session::do_read()
 {
 	auto self(shared_from_this());
@@ -120,9 +138,10 @@ void Session::push_WriteQueue(uint8_t opcode, std::shared_ptr<std::string> msg)
 void Session::excute_event(mysqlx::Row r)
 {
 	//std::cout << "LOGIN CALLBACK EXECUTE " << std::endl;
-	if (player.get_name() == "")
+	if (!player.isSet || player.get_name() == "")
 	{
 		player.set_from_db(r);
+		player.isSet = true;
 		//std::cout << "Player Data Set -> " << player.get_player_data().name << std::endl;
 	}
 }

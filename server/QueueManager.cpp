@@ -80,18 +80,21 @@ void QueueManager::process(Task& task)
                     }
                 }
             );
-
+            session->set_player_name(name);
             SessionManager::GetInstance().BroadCast(
                 static_cast<int>(Opcode::LOGIN),
-                std::make_shared<std::string>(name)
+                std::make_shared<std::string>(name + " " + session->get_player_position())
             );
 
             auto sessions = SessionManager::GetInstance().get_Sessions();
             for (auto [i, ses] : sessions)
             {
-                Player& p = ses.lock()->get_player();
-                std::shared_ptr<std::string> un = std::make_shared<std::string>(p.get_name());
-                if (*un != "")
+                std::string tname = ses.lock()->get_player_name();
+                std::shared_ptr<std::string> un = 
+                    std::make_shared<std::string>(
+                        tname + " " + ses.lock()->get_player_position()
+                    );
+                if (tname != "")
                 {
                     session->push_WriteQueue(
                         static_cast<int>(Opcode::LOGIN), un
@@ -123,6 +126,13 @@ void QueueManager::process(Task& task)
         );
     }
     else if (static_cast<int>(Opcode::ATTACK))
+    {
+        SessionManager::GetInstance().BroadCast(
+            static_cast<int>(Opcode::ATTACK),
+            std::make_shared<std::string>(payload)
+        );
+    }
+    else if (static_cast<int>(Opcode::LOGOUT))
     {
     }
     else 

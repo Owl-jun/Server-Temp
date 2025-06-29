@@ -43,6 +43,9 @@ public:
 	Player& get_player() { return player; }
 	int get_id() const { return id; }
 	void set_player_position(double x, double y);
+	void set_player_name(std::string name);
+	std::string get_player_position();
+	std::string get_player_name();
 	/////////////////////////////
 
 private:

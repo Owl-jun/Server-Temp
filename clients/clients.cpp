@@ -1,69 +1,81 @@
 ﻿#include <iostream>
+#include <string>
 #include <thread>
+#include <vector>
 #include <asio.hpp>
 #include <asio/ssl.hpp>
-#include <string>
 
 using asio::ip::tcp;
 
-void send(std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> soc, int count)
-{
-    asio::async_write(*soc, asio::buffer("LOGIN user" + std::to_string(count) + " pass1234\n"),
-        [soc, count](std::error_code ec, std::size_t) {
-            if (ec) {
-                std::cout << "쓰기 실패: " << ec.message() << "\n";
-            }
-            else {
-                std::cout << "쓰기 성공\n";
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+void create_tls_dummy(int id, const std::string& host, int port, asio::ssl::context& ctx) {
+    try {
+        asio::io_context io;
+        tcp::resolver resolver(io);
+        asio::ssl::stream<tcp::socket> socket(io, ctx);
 
-            send(soc, count);
-        });
+        auto endpoints = resolver.resolve(host, std::to_string(port));
+        asio::connect(socket.next_layer(), endpoints);
+        socket.handshake(asio::ssl::stream_base::client);
+
+        //std::cout << "[" << id << "] TLS 연결 성공\n";
+
+        while (true) {
+            // 1. 현재 시간(ms)
+            auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
+
+            std::string payload = std::to_string(now);
+            uint8_t opcode = 0x09;
+
+            uint32_t len = htonl(payload.size() + 1);
+            std::vector<uint8_t> full_packet(sizeof(len) + payload.size() + 1);
+            memcpy(full_packet.data(), &len, sizeof(len));
+            memcpy(full_packet.data() + sizeof(len), &opcode, 1);
+            memcpy(full_packet.data() + sizeof(len) + 1, payload.data(), payload.size());
+
+            // send
+            try {
+                auto bytes_sent = asio::write(socket, asio::buffer(full_packet));
+                //std::cout << "[" << id << "] 보낸 바이트 수: " << bytes_sent << " byte\n";
+            }
+            catch (std::exception& e) {
+                std::cerr << "[" << id << "] 전송 중 예외 발생: " << e.what() << "\n";
+            }
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+
+    }
+    catch (std::exception& e) {
+        std::cerr << "[" << id << "] 예외 발생: " << e.what() << "\n";
+    }
 }
 
+
+
 int main() {
-    std::vector<std::thread> testpool;
-    for (int count = 1; count < 500; ++count)
-    {
-        testpool.emplace_back([count]() {
-            asio::io_context io_context;
-            asio::ssl::context ssl_ctx(asio::ssl::context::tlsv12_client);
-            ssl_ctx.set_verify_mode(asio::ssl::verify_none); // 테스트용
+    int num;
+    std::cout << "더미 TLS 클라이언트 수: ";
+    std::cin >> num;
 
-            auto ssl_stream = std::make_shared<asio::ssl::stream<tcp::socket>>(io_context, ssl_ctx);
+    asio::ssl::context ctx(asio::ssl::context::sslv23);
+    ctx.set_verify_mode(asio::ssl::verify_none); // 테스트용: 인증서 검증 생략
 
-            tcp::resolver resolver(io_context);
-            auto endpoints = resolver.resolve("127.0.0.1", "9000");
-
-            asio::connect(ssl_stream->lowest_layer(), endpoints);
-            std::cout << std::to_string(count) << " : TCP 연결완료" << std::endl;
-            ssl_stream->async_handshake(asio::ssl::stream_base::client,
-                [ssl_stream, count](const std::error_code& ec) {
-                    if (!ec) {
-                        std::cout << "핸드셰이크 완료" << std::endl;
-                        send(ssl_stream,count);
-                    }
-                    else {
-                        std::cout << "[클라 " << count << "] handshake 에러: " << ec.message() << "\n";
-                    }
-                });
-
-            io_context.run();
+    std::vector<std::thread> threads;
+    for (int i = 0; i < num; ++i) {
+        threads.emplace_back([i, &ctx]() {
+            create_tls_dummy(i, "127.0.0.1", 9000, ctx);
             });
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // 서버 부하 방지
     }
 
-    for (auto& t : testpool) {
-        t.join();
+    std::cout << num << "개 TLS 연결 완료.\n";
+    std::cout << "종료하려면 q 입력\n";
+    while (true) {
+        char c;
+        std::cin >> c;
+        if (c == 'q') break;
     }
-        /*while (true) {
-            std::string msg;
-            std::getline(std::cin, msg);
-            msg += "\n";
-        }*/
-
 
     return 0;
 }

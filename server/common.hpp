@@ -10,7 +10,8 @@ enum class Opcode
 	LOGIN = 0x01,
 	MOVE = 0x02,
 	ATTACK = 0x03,
-	LOGOUT = 0x04
+	LOGOUT = 0x04,
+	PING = 0x09
 };
 
 //		RECV STATE		//

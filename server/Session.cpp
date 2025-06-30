@@ -49,7 +49,6 @@ std::string Session::get_player_name()
 void Session::do_read()
 {
 	auto self(shared_from_this());
-
 	if (state == ReadState::ReadingHeader)
 	{
 		// 길이 헤더: 4바이트 정수
@@ -85,7 +84,7 @@ void Session::do_read()
 				{
 					std::string packet(read_buffer.begin(), read_buffer.end());
 					if (self->isValid(packet)) {
-						//std::cout << "async_read packet -> " << packet << std::endl;
+						std::cout << "async_read packet -> " << packet << std::endl;
 						QueueManager::GetInstance().push({ self, packet });
 					}
 
@@ -201,7 +200,9 @@ bool Session::isValid(const std::string& packet)
 	if (packet.empty()) return false;
 	const uint8_t* data = reinterpret_cast<const uint8_t*>(packet.data());
 	uint8_t opcode = data[0];
-	if (opcode != static_cast<int>(Opcode::LOGIN)) { if (!isAuth) return false; }
+	if (opcode != static_cast<int>(Opcode::LOGIN)) { 
+		// if (!isAuth) return false; 
+	}
 
 	switch (opcode)
 	{
@@ -213,6 +214,8 @@ bool Session::isValid(const std::string& packet)
 		return validateAttack(data + 1, packet.size() - 1);
 	case 0x04: // LOGOUT
 		return validateLogout(data + 1, packet.size() - 1);
+	case 0x09:
+		return true;
 	default:
 		std::cout << "Unknown opcode: " << opcode << std::endl;
 		return false;

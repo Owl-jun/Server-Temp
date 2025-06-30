@@ -104,7 +104,7 @@ void QueueManager::process(Task& task)
         }
         else { return; }
     }
-    else if (static_cast<int>(Opcode::MOVE))
+    else if (opcode == static_cast<int>(Opcode::MOVE))
     {
         std::cout << "opcode : " << std::to_string(opcode) << " payload : " << payload << std::endl;
 
@@ -125,15 +125,22 @@ void QueueManager::process(Task& task)
             std::make_shared<std::string>(payload)
         );
     }
-    else if (static_cast<int>(Opcode::ATTACK))
+    else if (opcode == static_cast<int>(Opcode::ATTACK))
     {
         SessionManager::GetInstance().BroadCast(
             static_cast<int>(Opcode::ATTACK),
             std::make_shared<std::string>(payload)
         );
     }
-    else if (static_cast<int>(Opcode::LOGOUT))
+    else if (opcode == static_cast<int>(Opcode::LOGOUT))
     {
+    }
+    else if (opcode == static_cast<int>(Opcode::PING))
+    {
+        session->push_WriteQueue(
+            static_cast<int>(Opcode::PING),
+            std::make_shared<std::string>(payload)
+        );
     }
     else 
     {
